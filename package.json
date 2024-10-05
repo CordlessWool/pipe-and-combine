@@ -1,0 +1,11 @@
+{
+  "name": "pipe-and-combine",
+  "module": "src/entry.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
