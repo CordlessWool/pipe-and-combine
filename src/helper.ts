@@ -12,9 +12,9 @@ type BuildArray<
 
 export type LastIndex<T extends Array<unknown> | readonly [...unknown[]]> =
   T extends {
-    length: infer L;
+    length: infer L extends number;
   }
-    ? L
+    ? Decrement<L>
     : never;
 
 export type StringToNumber<T extends `${number}`> =
