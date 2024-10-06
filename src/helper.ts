@@ -36,3 +36,8 @@ export type AnyFunction<
   TInput extends Array<any> = Array<any>,
   TOutput = any,
 > = (...inputs: TInput) => TOutput;
+
+export type MaybePromise<T> = T | Promise<T>;
+export type ArrayMaybePromise<T> = {
+  [x in keyof T]: MaybePromise<T[x]>;
+};
