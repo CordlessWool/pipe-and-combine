@@ -31,3 +31,8 @@ export type Next<T extends number | `${number}`> = T extends number
   : T extends string
     ? Increment<StringToNumber<T>>
     : never;
+
+export type AnyFunction<
+  TInput extends Array<any> = Array<any>,
+  TOutput = any,
+> = (...inputs: TInput) => TOutput;

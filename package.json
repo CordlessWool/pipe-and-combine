@@ -2,6 +2,9 @@
   "name": "pipe-and-combine",
   "module": "src/entry.ts",
   "type": "module",
+  "scripts": {
+    "build": "tsc --project tsconfig.json"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
