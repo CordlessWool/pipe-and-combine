@@ -6,13 +6,20 @@ import type {
   Prev,
 } from "./helper";
 
+/**
+ *   AF: A Function
+ *   BF: B Function
+ *   AI: A Function Input
+ *   BO: B Function Output
+ */
+
 type PipeReduce<AF extends AnyFunction, BF extends AnyFunction> =
   BF extends AnyFunction<[Awaited<ReturnType<AF>>], unknown>
     ? BF
     : (...value: [ReturnType<AF>]) => unknown;
 
-type PipeReduceFirst<AI extends any[], BF extends AnyFunction> =
-  BF extends AnyFunction<AI, unknown> ? BF : (...value: AI) => unknown;
+type PipeReduceFirst<AI extends any[], BF extends AnyFunction, BO = unknown> =
+  BF extends AnyFunction<AI, BO> ? BF : (...value: AI) => BO;
 
 type PipeReduceLast<AF extends AnyFunction, BF extends AnyFunction, BO> =
   BF extends AnyFunction<[Awaited<ReturnType<AF>>], BO>
@@ -25,7 +32,11 @@ type PipeArray<
   TOutput = ReturnType<T[LastIndex<T>]>,
 > = {
   [X in keyof T]: X extends "0" | 0
-    ? PipeReduceFirst<TInput, T[X]>
+    ? PipeReduceFirst<
+        TInput,
+        T[X],
+        X extends `${LastIndex<T>}` ? TOutput : unknown
+      >
     : X extends `${LastIndex<T>}` | LastIndex<T>
       ? PipeReduceLast<T[Prev<X>], T[X], TOutput>
       : PipeReduce<T[Prev<X>], T[X]>;
@@ -63,15 +74,10 @@ export const createPipe =
 const p = createPipe<[string], number>();
 const ex = p(
   (i: string): number => Number(i),
-
-  (i: number) => i * 2,
+  (i: number) => i + 1,
 );
 const r = ex("2");
 
 const p1 = createPipe();
-const ex1 = p1(
-  (i: string): number => Number(i),
-
-  (i: number) => i * 2,
-);
+const ex1 = p1((i: string): number => Number(i));
 const r1 = ex1("2");
