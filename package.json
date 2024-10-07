@@ -1,11 +1,13 @@
 {
   "name": "pipe-and-combine",
   "module": "dist/entry.js",
+  "types": "dist/entry.d.ts",
   "type": "module",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "tsc --project tsconfig.json"
+    "build": "tsc --project tsconfig.json",
+    "prepublishOnly": "bun run build && publint"
   },
   "files": [
     "dist"
@@ -13,18 +15,18 @@
   "exports": {
     ".": {
       "types": "./dist/entry.d.ts",
-      "import": "./dist/entry.js",
-      "require": "./dist/entry.js"
+      "import": "./dist/entry.js"
     }
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "publint": "^0.2.11"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.6.2"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/CordlessWool/pipe-and-combine"
+    "url": "git+https://github.com/CordlessWool/pipe-and-combine.git"
   }
 }
