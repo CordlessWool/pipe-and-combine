@@ -53,18 +53,25 @@ export const pipe =
     >;
 
 export const createPipe =
-  <TInput extends any[] = never, TOutput = never>() =>
+  <TInput extends any[], TOutput>() =>
   <T extends readonly AnyFunction[]>(...fus: PipeArray<T, TInput, TOutput>) =>
-  (
-    ...input: TInput extends never ? Parameters<T[0]> : TInput
-  ): ReturnType<PipeArray<T>[LastIndex<T>]> =>
-    fus.reduce((acc, f) => f(acc), input) as ReturnType<
-      PipeArray<T>[LastIndex<T>]
-    >;
+  (...input: TInput extends any ? Parameters<T[0]> : TInput) =>
+    fus.reduce((acc, f) => f(acc), input) as TOutput extends any
+      ? ReturnType<PipeArray<T>[LastIndex<T>]>
+      : TOutput;
 
 const p = createPipe<[string], number>();
 const ex = p(
   (i: string): number => Number(i),
+
   (i: number) => i * 2,
 );
 const r = ex("2");
+
+const p1 = createPipe();
+const ex1 = p1(
+  (i: string): number => Number(i),
+
+  (i: number) => i * 2,
+);
+const r1 = ex1("2");
