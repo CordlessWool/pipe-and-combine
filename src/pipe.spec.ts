@@ -21,7 +21,9 @@ describe("pipeAsync", () => {
       new Promise<number>((resolve) => setTimeout(() => resolve(x * x), 100));
     const toStr = async (x: number) => x.toString();
 
-    const pipeline = pipeAsync(double, increment, square, increment, toStr);
+    const pipeline = pipeAsync(double, increment, square, increment, toStr)<
+      [string]
+    >;
     expect(pipeline(2)).resolves.toBe("26");
   });
 });
