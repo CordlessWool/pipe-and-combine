@@ -10,6 +10,13 @@
   "files": [
     "dist"
   ],
+  "exports": {
+    ".": {
+      "types": "./dist/entry.d.ts",
+      "import": "./dist/entry.js",
+      "require": "./dist/entry.js"
+    }
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
