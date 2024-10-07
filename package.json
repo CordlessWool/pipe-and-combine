@@ -1,14 +1,23 @@
 {
   "name": "pipe-and-combine",
-  "module": "src/entry.ts",
+  "module": "dist/entry.js",
   "type": "module",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
   "scripts": {
     "build": "tsc --project tsconfig.json"
   },
+  "files": [
+    "dist"
+  ],
   "devDependencies": {
     "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CordlessWool/pipe-and-combine"
   }
 }
