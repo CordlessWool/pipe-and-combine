@@ -1,5 +1,5 @@
 import { test, describe, expect } from "vitest";
-import { pipe, pipeAsync } from "./pipe";
+import { asyncPipe, pipe } from "./pipe";
 
 describe("pipe", () => {
   test("should return 25", () => {
@@ -21,7 +21,7 @@ describe("pipeAsync", () => {
       new Promise<number>((resolve) => setTimeout(() => resolve(x * x), 100));
     const toStr = async (x: number) => x.toString();
 
-    const pipeline = pipeAsync(double, increment, square, increment, toStr);
+    const pipeline = asyncPipe(double, increment, square, increment, toStr);
     expect(pipeline(2)).resolves.toBe("26");
   });
 });

@@ -1,8 +1,8 @@
-import { test, describe, expect, assertType, expectTypeOf } from "vitest";
-import { pipe, pipeAsync, preparePipe } from "./pipe";
+import { test, describe, assertType, expectTypeOf } from "vitest";
+import { asyncPipe, awit, pipe, preparePipe } from "./pipe";
 
 describe("pipe", () => {
-  test("should return 25", () => {
+  test("should return string", () => {
     const double = (x: number) => x * 2;
     const increment = (x: number) => x + 1;
     const square = (x: number) => x * x;
@@ -13,18 +13,41 @@ describe("pipe", () => {
     expectTypeOf(pipeline).returns.toEqualTypeOf<string>();
     assertType<string>(pipeline(2));
   });
-});
 
-describe.skip("pipeAsync", () => {
-  test("simple", () => {
+  test("pipe with awit (await)", () => {
     const double = async (x: number) => x * 2;
     const increment = async (x: number) => Promise.resolve(x + 1);
     const square = async (x: number) =>
       new Promise<number>((resolve) => setTimeout(() => resolve(x * x), 100));
     const toStr = async (x: number) => x.toString();
 
-    const pipeline = pipeAsync(double, increment, square, increment, toStr);
-    expectTypeOf(pipeline).parameter(0).toEqualTypeOf<number>();
+    const pipeline = pipe(
+      awit(double),
+      awit(increment),
+      awit(square),
+      awit(increment),
+      awit(toStr),
+    );
+    expectTypeOf(pipeline)
+      .parameter(0)
+      .toEqualTypeOf<number | Promise<number>>();
+    expectTypeOf(pipeline).returns.toEqualTypeOf<Promise<string>>();
+    assertType<Promise<string>>(pipeline(2));
+  });
+});
+
+describe("asyncPipe", () => {
+  test("should return Promise<string>", () => {
+    const double = async (x: number) => x * 2;
+    const increment = async (x: number) => Promise.resolve(x + 1);
+    const square = async (x: number) =>
+      new Promise<number>((resolve) => setTimeout(() => resolve(x * x), 100));
+    const toStr = async (x: number) => x.toString();
+
+    const pipeline = asyncPipe(double, increment, square, increment, toStr);
+    expectTypeOf(pipeline)
+      .parameter(0)
+      .toEqualTypeOf<number | Promise<number>>();
     expectTypeOf(pipeline).returns.toEqualTypeOf<Promise<string>>();
     assertType<Promise<string>>(pipeline(2));
   });
