@@ -1,2 +1,2 @@
-export { pipe, pipeAsync } from "./pipe";
+export { pipe, asyncPipe, preparePipe, prepareAsyncPipe } from "./pipe";
 export { combine } from "./combine";
