@@ -10,6 +10,7 @@
     "declarationMap": true,
 
     // Enable latest features
+    "moduleResolution": "bundler",
     "lib": ["ESNext", "DOM"],
     "target": "ESNext",
     "module": "ESNext",

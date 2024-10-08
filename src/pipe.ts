@@ -54,16 +54,7 @@ export const pipeAsync =
       return f(result);
     }, Promise.all(input)) as ReturnType<PipeArray<T>[LastIndex<T>]>;
 
-export const pipe =
-  <T extends readonly AnyFunction[]>(...fus: PipeArray<T>) =>
-  <TInput extends any[] = Parameters<T[0]>>(
-    ...input: TInput
-  ): ReturnType<PipeArray<T>[LastIndex<T>]> =>
-    fus.reduce((acc, f) => f(acc), input) as ReturnType<
-      PipeArray<T>[LastIndex<T>]
-    >;
-
-export const createPipe =
+export const preparePipe =
   <TInput extends any[], TOutput>() =>
   <T extends readonly AnyFunction[]>(...fus: PipeArray<T, TInput, TOutput>) =>
   (...input: TInput extends any ? Parameters<T[0]> : TInput) =>
@@ -71,13 +62,15 @@ export const createPipe =
       ? ReturnType<PipeArray<T>[LastIndex<T>]>
       : TOutput;
 
-const p = createPipe<[string], number>();
+export const pipe = preparePipe();
+
+const p = preparePipe<[string], number>();
 const ex = p(
   (i: string): number => Number(i),
   (i: number) => i + 1,
 );
 const r = ex("2");
 
-const p1 = createPipe();
+const p1 = preparePipe();
 const ex1 = p1((i: string): number => Number(i));
 const r1 = ex1("2");
