@@ -63,14 +63,3 @@ export const preparePipe =
       : TOutput;
 
 export const pipe = preparePipe();
-
-const p = preparePipe<[string], number>();
-const ex = p(
-  (i: string): number => Number(i),
-  (i: number) => i + 1,
-);
-const r = ex("2");
-
-const p1 = preparePipe();
-const ex1 = p1((i: string): number => Number(i));
-const r1 = ex1("2");
