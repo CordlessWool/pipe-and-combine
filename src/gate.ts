@@ -1,5 +1,5 @@
-import { combine, CombineArray } from "./combine";
-import { AnyFunction } from "./helper";
+import { combine, type CombineArray } from "./combine";
+import type { AnyFunction } from "./helper";
 
 export class GateException<T extends any[]> extends Error {
   public readonly result: T;

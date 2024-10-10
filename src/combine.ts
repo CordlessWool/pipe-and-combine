@@ -1,4 +1,4 @@
-import { AnyFunction, LastIndex } from "./helper";
+import type { AnyFunction } from "./helper";
 
 type CombineMap<
   AF extends AnyFunction,
@@ -19,7 +19,7 @@ export type CombineArray<
   >;
 };
 
-type CombineReturn<T extends readonly AnyFunction[]> = {
+export type CombineReturn<T extends readonly AnyFunction[]> = {
   [X in keyof T]: ReturnType<T[X]>;
 };
 
