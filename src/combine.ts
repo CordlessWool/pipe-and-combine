@@ -7,7 +7,7 @@ type CombineMap<
 > =
   AF extends AnyFunction<TInput, TOutput> ? AF : (...value: TInput) => TOutput;
 
-type CombineArray<
+export type CombineArray<
   T extends readonly AnyFunction[],
   TInput extends any[],
   TOutput extends any,

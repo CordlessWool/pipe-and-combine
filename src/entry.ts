@@ -6,4 +6,5 @@ export {
   dispel,
   awit,
 } from "./pipe";
-export { combine } from "./combine";
+export { combine, prepareCombine } from "./combine";
+export { gate, prepareGate } from "./gate";
