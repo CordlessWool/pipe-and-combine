@@ -1,17 +1,36 @@
-import { AnyFunction } from "./helper";
+import { AnyFunction, LastIndex } from "./helper";
 
-type CombineMap<AF extends AnyFunction, TInput extends unknown[]> =
-  AF extends AnyFunction<TInput, infer B> ? AF : (...value: TInput) => unknown;
+type CombineMap<
+  AF extends AnyFunction,
+  TInput extends unknown[],
+  TOutput extends any,
+> =
+  AF extends AnyFunction<TInput, TOutput> ? AF : (...value: TInput) => TOutput;
 
-type CombineArray<T extends readonly AnyFunction[]> = {
-  [X in keyof T]: CombineMap<T[X], Parameters<T[0]>>;
+type CombineArray<
+  T extends readonly AnyFunction[],
+  TInput extends any[],
+  TOutput extends any,
+> = {
+  [X in keyof T]: CombineMap<
+    T[X],
+    TInput extends any ? Parameters<T[0]> : TInput,
+    TOutput extends any ? ReturnType<T[X]> : TOutput
+  >;
 };
 
 type CombineReturn<T extends readonly AnyFunction[]> = {
   [X in keyof T]: ReturnType<T[X]>;
 };
 
-export const combine =
-  <T extends readonly AnyFunction[]>(...fus: CombineArray<T>) =>
-  (...input: Parameters<T[0]>): CombineReturn<T> =>
-    fus.map((fu) => fu(...input)) as CombineReturn<T>;
+export const prepareCombine =
+  <TInput extends any[], TOutput = any>() =>
+  <T extends readonly AnyFunction[]>(
+    ...fus: CombineArray<T, TInput, TOutput>
+  ) =>
+  (...input: TInput extends any ? Parameters<T[0]> : TInput) =>
+    fus.map((fu) => fu(...input)) as TOutput extends any
+      ? CombineReturn<T>
+      : TOutput[];
+
+export const combine = prepareCombine();

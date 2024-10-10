@@ -43,11 +43,6 @@ type AsyncPipeArray<
       : PipeReduce<[Awaited<PrevReturn<T, X>>], T[X]>;
 };
 
-interface PreparePipeOptions {
-  enableAsync: boolean;
-  enableDestructure: boolean;
-}
-
 export const awit =
   <T extends AnyFunction<any[], Promise<any>>>(fu: T) =>
   async (
@@ -67,7 +62,7 @@ export const dispel =
   };
 
 export const preparePipe =
-  <TInput extends any[], TOutput>(options?: PreparePipeOptions) =>
+  <TInput extends any[], TOutput>() =>
   <T extends readonly AnyFunction[]>(...fus: PipeArray<T, TInput, TOutput>) => {
     const [first, ...rest] = fus;
     const chain = rest.reduce(
@@ -82,7 +77,7 @@ export const preparePipe =
   };
 
 export const prepareAsyncPipe =
-  <TInput extends any[], TOutput>(options?: PreparePipeOptions) =>
+  <TInput extends any[], TOutput>() =>
   <T extends readonly AnyFunction[]>(
     ...fus: AsyncPipeArray<T, TInput, TOutput>
   ) => {
