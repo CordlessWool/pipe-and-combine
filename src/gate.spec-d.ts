@@ -1,5 +1,5 @@
-import { test, describe, assertType, expectTypeOf } from "vitest";
-import { gate, GateException, prepareGate } from "./gate";
+import { test, describe, expectTypeOf } from "vitest";
+import { gate, prepareGate } from "./gate";
 
 describe("combine", () => {
   interface User {

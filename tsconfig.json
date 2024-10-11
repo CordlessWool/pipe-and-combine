@@ -3,18 +3,15 @@
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
   "compilerOptions": {
     // Base configuration
-    "outDir": "./dist",
+    "outDir": "./dist/esm",
     "rootDir": "./src",
-    "sourceMap": true,
     "declaration": true,
-    "declarationMap": true,
 
     // Enable latest features
     "moduleResolution": "bundler",
-    "lib": ["ESNext", "DOM"],
-    "target": "ESNext",
+    "target": "ES2021",
     "module": "ESNext",
-    "moduleDetection": "force",
+    "esModuleInterop": true,
 
     // Best practices
     "strict": true,
@@ -22,8 +19,8 @@
     "noFallthroughCasesInSwitch": true,
 
     // Some stricter flags (disabled by default)
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noPropertyAccessFromIndexSignature": false
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noPropertyAccessFromIndexSignature": true
   }
 }
