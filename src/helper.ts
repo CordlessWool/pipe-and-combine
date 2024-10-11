@@ -33,7 +33,7 @@ export type Next<T extends number | `${number}`> = T extends number
     : never;
 
 export type AnyFunction<
-  TInput extends Array<any> = Array<any>,
+  TInput extends [...any[]] = [...any[]],
   TOutput = any,
 > = (...inputs: TInput) => TOutput;
 

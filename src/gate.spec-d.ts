@@ -1,0 +1,46 @@
+import { test, describe, assertType, expectTypeOf } from "vitest";
+import { gate, GateException, prepareGate } from "./gate";
+
+describe("combine", () => {
+  interface User {
+    isAdmin: boolean;
+    isUser: boolean;
+    isGuest: boolean;
+    company?: string;
+  }
+  const isAuthorized =
+    (attr: keyof User, value: string | number | boolean) => (user: User) =>
+      user[attr] === value;
+
+  test("Returntype", () => {
+    const user: User = {
+      isAdmin: true,
+      isUser: false,
+      isGuest: false,
+      company: "Cotton-Coding",
+    };
+    const gateRunner = gate(
+      isAuthorized("isAdmin", true),
+      isAuthorized("company", "Cotton-Coding"),
+    );
+    const t = isAuthorized("isAdmin", true);
+    type p = Parameters<typeof t>;
+    expectTypeOf(gateRunner).parameter(0).toEqualTypeOf<User>();
+    expectTypeOf(gateRunner(user)).toEqualTypeOf<[User]>();
+  });
+
+  test("Returntype with modifier", () => {
+    const user: User = {
+      isAdmin: true,
+      isUser: false,
+      isGuest: false,
+      company: "Cotton-Coding",
+    };
+    const preparedGate = prepareGate((user: User) => [user.company]);
+    const gateRunner = preparedGate(
+      (company: string) => company === "Cotton-Coding",
+    );
+    expectTypeOf(gateRunner).parameter(0).toEqualTypeOf<User>();
+    expectTypeOf(gateRunner(user)).toEqualTypeOf<[User]>();
+  });
+});

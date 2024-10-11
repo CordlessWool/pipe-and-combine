@@ -11,16 +11,14 @@ export class GateException<T extends any[]> extends Error {
 }
 
 export const prepareGate =
-  <TInput extends any[], VInput extends any[] = TInput>(
+  <TInput extends [...any[]], VInput extends [...any[]] = TInput>(
     modifier?: AnyFunction<TInput, VInput>,
   ) =>
   <T extends readonly AnyFunction[]>(...fus: CombineArray<T, VInput, any>) => {
     const combined = combine<AnyFunction<VInput, any>[]>(...fus);
-    return (
-      ...input: typeof modifier extends AnyFunction ? TInput : Parameters<T[0]>
-    ) => {
+    return (...input: TInput extends VInput ? Parameters<T[0]> : TInput) => {
       const vInput = (
-        modifier ? modifier(...(input as unknown as TInput)) : input
+        modifier ? modifier(...(input as TInput)) : input
       ) as VInput;
       const result = combined(...vInput);
       if (result.some((result) => result === false)) {

@@ -2,7 +2,7 @@ import type { AnyFunction } from "./helper";
 
 type CombineMap<
   AF extends AnyFunction,
-  TInput extends unknown[],
+  TInput extends any[],
   TOutput extends any,
 > =
   AF extends AnyFunction<TInput, TOutput> ? AF : (...value: TInput) => TOutput;
