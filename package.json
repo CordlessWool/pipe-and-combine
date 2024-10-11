@@ -1,9 +1,9 @@
 {
   "name": "pipe-and-combine",
-  "module": "dist/entry.js",
+  "main": "dist/entry.js",
   "types": "dist/entry.d.ts",
   "type": "module",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "license": "Apache-2.0",
   "scripts": {
     "build": "tsc --project tsconfig.json",
@@ -11,6 +11,10 @@
     "test": "vitest",
     "tt": "vitest --typecheck"
   },
+  "keywords": [
+    "pipe",
+    "combine"
+  ],
   "files": [
     "dist"
   ],
