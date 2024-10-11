@@ -23,8 +23,6 @@ describe("combine", () => {
       isAuthorized("isAdmin", true),
       isAuthorized("company", "Cotton-Coding"),
     );
-    const t = isAuthorized("isAdmin", true);
-    type p = Parameters<typeof t>;
     expectTypeOf(gateRunner).parameter(0).toEqualTypeOf<User>();
     expectTypeOf(gateRunner(user)).toEqualTypeOf<[User]>();
   });
@@ -36,7 +34,7 @@ describe("combine", () => {
       isGuest: false,
       company: "Cotton-Coding",
     };
-    const preparedGate = prepareGate((user: User) => [user.company]);
+    const preparedGate = prepareGate(({ company }: User) => [company]);
     const gateRunner = preparedGate(
       (company: string) => company === "Cotton-Coding",
     );
