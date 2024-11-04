@@ -23,6 +23,9 @@ export type CombineReturn<T extends readonly AnyFunction[]> = {
   [X in keyof T]: ReturnType<T[X]>;
 };
 
+/**
+ * Return a function that combines multiple functions into one. Input and Output types defines the functions could be added to the combine function.
+ */
 export const prepareCombine =
   <TInput extends any[], TOutput = any>() =>
   <T extends readonly AnyFunction[]>(
@@ -33,4 +36,9 @@ export const prepareCombine =
       ? CombineReturn<T>
       : TOutput[];
 
+/**
+ * Combine multiple functions into one function.
+ * Input type is defined by the first function.
+ * The Returned function will return an array of the return values of the functions.
+ */
 export const combine = prepareCombine();

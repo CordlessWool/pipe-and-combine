@@ -61,6 +61,13 @@ export const dispel =
     return fu(...args);
   };
 
+/**
+ * This function prepares a pipe function with a preset input and output.
+ * The first function has to be a function that takes the input
+ * and the last function has to be a function that returns the output.
+ *
+ * @returns { Function } - a pipe function with a preset input and output.
+ */
 export const preparePipe =
   <TInput extends any[], TOutput>() =>
   <T extends readonly AnyFunction[]>(...fus: PipeArray<T, TInput, TOutput>) => {
@@ -76,6 +83,13 @@ export const preparePipe =
     ) => TOutput extends any ? ReturnType<PipeArray<T>[LastIndex<T>]> : TOutput;
   };
 
+/**
+ * This function prepares a async pipe function with a preset input and output.
+ * The first function has to be a function that takes the input
+ * and the last function has to be a function that returns the output.
+ *
+ * @returns { Function } - a pipe function with a preset input and output.
+ */
 export const prepareAsyncPipe =
   <TInput extends any[], TOutput>() =>
   <T extends readonly AnyFunction[]>(
@@ -101,5 +115,13 @@ export const prepareAsyncPipe =
     >;
   };
 
+/**
+ * This function takes a list of functions and returns a function that takes the input of the first function and the output of the last function.
+ */
 export const pipe = preparePipe();
+
+/**
+ * This function takes a list of functions and returns a function that takes the input of the first function and the output of the last function.
+ * Async functions are supported and will be awaited before passing the result to the next function.
+ */
 export const asyncPipe = prepareAsyncPipe();
