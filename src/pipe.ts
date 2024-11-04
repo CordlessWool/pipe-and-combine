@@ -43,6 +43,12 @@ type AsyncPipeArray<
       : PipeReduce<[Awaited<PrevReturn<T, X>>], T[X]>;
 };
 
+/**
+ * Wrapps around a function and awaits the input parameters.
+ * The return value is a promise, which resolves to the return value of the function.
+ *
+ * @param fu - The function to be wrapped.
+ */
 export const awit =
   <T extends AnyFunction<any[], Promise<any>>>(fu: T) =>
   async (
@@ -52,6 +58,10 @@ export const awit =
     return fu(...args);
   };
 
+/**
+ * Wrapps around a function and deserializes an array as arguments.
+ * e.g. dispel(fu)([1, 2, 3]) is equal to fu(1, 2, 3)
+ */
 export const dispel =
   <T extends AnyFunction>(fu: T) =>
   (args: Parameters<T>): ReturnType<T> => {
@@ -62,11 +72,20 @@ export const dispel =
   };
 
 /**
+ * Executes a function with all values of an array.
+ * e.g. execute(fu)([1, 2, 3]) is equal to [fu(1), fu(2), fu(3)]
+ */
+export const map =
+  <T, U>(fn: (arg: T) => U) =>
+  (arr: T[]) =>
+    arr.map(fn);
+
+/**
  * This function prepares a pipe function with a preset input and output.
  * The first function has to be a function that takes the input
  * and the last function has to be a function that returns the output.
  *
- * @returns { Function } - a pipe function with a preset input and output.
+ * @returns a pipe function with a preset input and output.
  */
 export const preparePipe =
   <TInput extends any[], TOutput>() =>
@@ -88,7 +107,7 @@ export const preparePipe =
  * The first function has to be a function that takes the input
  * and the last function has to be a function that returns the output.
  *
- * @returns { Function } - a pipe function with a preset input and output.
+ * @returns a pipe function with a preset input and output.
  */
 export const prepareAsyncPipe =
   <TInput extends any[], TOutput>() =>
