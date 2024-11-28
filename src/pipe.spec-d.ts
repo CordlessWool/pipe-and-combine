@@ -1,5 +1,6 @@
 import { test, describe, assertType, expectTypeOf } from "vitest";
 import { asyncPipe, awit, pipe, preparePipe } from "./pipe";
+import { g as gm } from "./test";
 
 describe("pipe", () => {
   test("should return string", () => {
@@ -33,6 +34,42 @@ describe("pipe", () => {
       .toEqualTypeOf<number | Promise<number>>();
     expectTypeOf(pipeline).returns.toEqualTypeOf<Promise<string>>();
     assertType<Promise<string>>(pipeline(2));
+  });
+
+  test("pipe with generics", () => {
+    const init = () => () => ({ test: "test" });
+    const addStartupTime = (time: Date = new Date()) =>
+      gm(() => ({
+        startup: time,
+      }));
+    const addTime = () =>
+      gm((d: {}) => ({
+        current: new Date(),
+      }));
+    const timeDiff = () =>
+      gm((data: { startup: Date; current: Date }) => {
+        return {
+          ...data,
+          diff: new Date(data.current.getTime() - data.startup.getTime()),
+        };
+      });
+
+    const currentToString = () =>
+      gm((data: { current: Date }) => {
+        return {
+          current: data.current.toString(),
+        };
+      });
+
+    pipe(
+      init(),
+      addStartupTime(),
+      addTime(),
+      currentToString(),
+      timeDiff(),
+      (x: any) => JSON.stringify(x),
+      addTime(),
+    );
   });
 });
 

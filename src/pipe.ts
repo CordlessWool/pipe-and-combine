@@ -1,4 +1,5 @@
 import type { AnyFunction, ArrayMaybePromise, LastIndex, Prev } from "./helper";
+import { GMerge, MergeObjects } from "./test";
 
 /**
  *   AF: A Function
@@ -10,7 +11,10 @@ import type { AnyFunction, ArrayMaybePromise, LastIndex, Prev } from "./helper";
 type PrevReturn<
   T extends readonly AnyFunction[],
   X extends `${number}` | number,
-> = ReturnType<T[Prev<X>]>;
+> =
+  T[Prev<X>] extends GMerge<infer GI, infer GO>
+    ? MergeObjects<PrevReturn<T, Prev<X>>, GO>
+    : ReturnType<T[Prev<X>]>;
 
 type PipeReduce<AI extends any[], BF extends AnyFunction, BO = unknown> =
   BF extends AnyFunction<AI, BO> ? BF : (...value: AI) => BO;
