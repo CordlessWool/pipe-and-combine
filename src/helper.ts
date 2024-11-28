@@ -1,5 +1,7 @@
 export type Increment<N extends number> = [...BuildArray<N>, unknown]["length"];
 
+export type AnyObject = Record<string | number | symbol, any>;
+
 export type Decrement<N extends number> = N extends 0
   ? never // If the number is 0, there's nothing to decrement
   : BuildArray<N> extends [...infer Rest, infer _]
