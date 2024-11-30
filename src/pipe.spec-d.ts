@@ -2,7 +2,6 @@ import { test, describe, assertType, expectTypeOf } from "vitest";
 import { asyncPipe, pipe, preparePipe } from "./pipe";
 import { awit } from "./helpers";
 import { g as gm } from "./helpers";
-import { AnyObject } from "./types";
 import { addDate } from "./helpers/generics";
 
 describe("pipe", () => {
@@ -153,5 +152,43 @@ describe("preparePipe", () => {
     expectTypeOf(transformer).parameter(0).toEqualTypeOf<string>();
     expectTypeOf(transformer).returns.toEqualTypeOf<string>();
     assertType<string>(transformer("2"));
+  });
+
+  test("async pipe with generics", () => {
+    const init = () => () => ({ test: "test" });
+    const addStartupTime = (time: Date = new Date()) =>
+      gm(() => ({
+        startup: time,
+      }));
+    const timeDiff = () =>
+      gm(async (data: { startup: Date; current: Date }) => {
+        return {
+          ...data,
+          diff: new Date(data.current.getTime() - data.startup.getTime()),
+        };
+      });
+
+    const currentToString = () =>
+      gm((data: { current: Date }) => {
+        return {
+          current: data.current.toString(),
+        };
+      });
+
+    const pipeline = asyncPipe(
+      init(),
+      addStartupTime(),
+      addDate("current"),
+      timeDiff(),
+      currentToString(),
+      addDate("current"),
+    );
+
+    expectTypeOf(pipeline).returns.toEqualTypeOf<{
+      current: Date;
+      startup: Date;
+      diff: Date;
+      test: string;
+    }>();
   });
 });
