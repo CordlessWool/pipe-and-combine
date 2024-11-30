@@ -1,5 +1,6 @@
 import { test, describe, expect } from "vitest";
-import { asyncPipe, awit, dispel, pipe } from "./pipe";
+import { asyncPipe, pipe } from "./pipe";
+import { dispel, awit } from "./helpers";
 
 describe("pipe", () => {
   const inc = (by: number) => (x: number) => x + by;

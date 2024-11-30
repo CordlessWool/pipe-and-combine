@@ -1,6 +1,9 @@
 import { test, describe, assertType, expectTypeOf } from "vitest";
-import { asyncPipe, awit, pipe, preparePipe } from "./pipe";
-import { g as gm } from "./test";
+import { asyncPipe, pipe, preparePipe } from "./pipe";
+import { awit } from "./helpers";
+import { g as gm } from "./helpers";
+import { AnyObject } from "./types";
+import { addDate } from "./helpers/generics";
 
 describe("pipe", () => {
   test("should return string", () => {
@@ -42,10 +45,6 @@ describe("pipe", () => {
       gm(() => ({
         startup: time,
       }));
-    const addTime = () =>
-      gm((d: {}) => ({
-        current: new Date(),
-      }));
     const timeDiff = () =>
       gm((data: { startup: Date; current: Date }) => {
         return {
@@ -61,15 +60,21 @@ describe("pipe", () => {
         };
       });
 
-    pipe(
+    const pipeline = pipe(
       init(),
       addStartupTime(),
-      addTime(),
-      currentToString(),
+      addDate("current"),
       timeDiff(),
-      (x: any) => JSON.stringify(x),
-      addTime(),
+      currentToString(),
+      addDate("current"),
     );
+
+    expectTypeOf(pipeline).returns.toEqualTypeOf<{
+      current: Date;
+      startup: Date;
+      diff: Date;
+      test: string;
+    }>();
   });
 });
 

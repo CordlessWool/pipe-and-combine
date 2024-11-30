@@ -1,5 +1,11 @@
-import type { AnyFunction, ArrayMaybePromise, LastIndex, Prev } from "./helper";
-import { GMerge, MergeObjects } from "./test";
+import type {
+  AnyFunction,
+  ArrayMaybePromise,
+  LastIndex,
+  Prev,
+  GMerge,
+  MergeObjects,
+} from "./types";
 
 /**
  *   AF: A Function
@@ -47,42 +53,14 @@ type AsyncPipeArray<
       : PipeReduce<[Awaited<PrevReturn<T, X>>], T[X]>;
 };
 
-/**
- * Wrapps around a function and awaits the input parameters.
- * The return value is a promise, which resolves to the return value of the function.
- *
- * @param fu - The function to be wrapped.
- */
-export const awit =
-  <T extends AnyFunction<any[], Promise<any>>>(fu: T) =>
-  async (
-    ...maybePromise: ArrayMaybePromise<Parameters<T>>
-  ): Promise<Awaited<ReturnType<T>>> => {
-    const args = await Promise.all(maybePromise);
-    return fu(...args);
-  };
-
-/**
- * Wrapps around a function and deserializes an array as arguments.
- * e.g. dispel(fu)([1, 2, 3]) is equal to fu(1, 2, 3)
- */
-export const dispel =
-  <T extends AnyFunction>(fu: T) =>
-  (args: Parameters<T>): ReturnType<T> => {
-    if (args.length === 1 && Array.isArray(args[0])) {
-      return fu(...args[0]);
-    }
-    return fu(...args);
-  };
-
-/**
- * Executes a function with all values of an array.
- * e.g. execute(fu)([1, 2, 3]) is equal to [fu(1), fu(2), fu(3)]
- */
-export const map =
-  <T, U>(fn: (arg: T) => U) =>
-  (arr: T[]) =>
-    arr.map(fn);
+type PipeReturn<
+  DefinedOutput,
+  F extends readonly AnyFunction[],
+> = DefinedOutput extends any
+  ? F[LastIndex<F>] extends GMerge<any, infer GO>
+    ? MergeObjects<PrevReturn<F, LastIndex<F>>, GO>
+    : ReturnType<PipeArray<F>[LastIndex<F>]>
+  : DefinedOutput;
 
 /**
  * This function prepares a pipe function with a preset input and output.
@@ -103,7 +81,7 @@ export const preparePipe =
     );
     return chain as (
       ...input: TInput extends any ? Parameters<T[0]> : TInput
-    ) => TOutput extends any ? ReturnType<PipeArray<T>[LastIndex<T>]> : TOutput;
+    ) => PipeReturn<TOutput, T>;
   };
 
 /**
@@ -131,11 +109,7 @@ export const prepareAsyncPipe =
       ...input: TInput extends any
         ? ArrayMaybePromise<Parameters<T[0]>>
         : TInput
-    ) => Promise<
-      TOutput extends any
-        ? Awaited<ReturnType<PipeArray<T>[LastIndex<T>]>>
-        : Awaited<TOutput>
-    >;
+    ) => Promise<Awaited<PipeReturn<TOutput, T>>>;
   };
 
 /**

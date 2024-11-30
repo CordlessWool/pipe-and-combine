@@ -1,10 +1,5 @@
-export {
-  pipe,
-  asyncPipe,
-  preparePipe,
-  prepareAsyncPipe,
-  dispel,
-  awit,
-} from "./pipe";
+export { pipe, asyncPipe, preparePipe, prepareAsyncPipe } from "./pipe";
 export { combine, prepareCombine } from "./combine";
 export { gate, prepareGate } from "./gate";
+export * from "./helpers";
+export * from "./types";

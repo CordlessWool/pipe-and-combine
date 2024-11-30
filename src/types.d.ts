@@ -43,3 +43,18 @@ export type MaybePromise<T> = T | Promise<T>;
 export type ArrayMaybePromise<T> = {
   [x in keyof T]: MaybePromise<T[x]>;
 };
+
+export type MergeObjects<A, B> = {
+  [X in keyof A | keyof B]: X extends keyof B
+    ? B[X]
+    : X extends keyof A
+      ? A[X]
+      : never;
+};
+
+/**
+ * Generics
+ */
+export type GMerge<I, O> = ((data: I) => I & O) & {
+  __brand: "GMerge";
+};
