@@ -18,8 +18,8 @@ type PrevReturn<
   T extends readonly AnyFunction[],
   X extends `${number}` | number,
 > =
-  T[Prev<X>] extends GMerge<infer GI, infer GO>
-    ? MergeObjects<PrevReturn<T, Prev<X>>, GO>
+  T[Prev<X>] extends GMerge<any, infer GO>
+    ? MergeObjects<PrevReturn<T, Prev<X>>, Awaited<GO>>
     : ReturnType<T[Prev<X>]>;
 
 type PipeReduce<AI extends any[], BF extends AnyFunction, BO = unknown> =
@@ -58,7 +58,7 @@ type PipeReturn<
   F extends readonly AnyFunction[],
 > = DefinedOutput extends any
   ? F[LastIndex<F>] extends GMerge<any, infer GO>
-    ? MergeObjects<PrevReturn<F, LastIndex<F>>, GO>
+    ? MergeObjects<PrevReturn<F, LastIndex<F>>, Awaited<GO>>
     : ReturnType<PipeArray<F>[LastIndex<F>]>
   : DefinedOutput;
 

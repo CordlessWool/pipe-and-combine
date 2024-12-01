@@ -10,8 +10,8 @@ import { AnyObject, GMerge } from "../types";
 export const g = <const FI extends AnyObject, FO>(
   fu: (args: FI) => FO,
 ): GMerge<FI, FO> =>
-  ((data) => {
-    const subset = fu(data);
+  (async (data) => {
+    const subset = await fu(data);
     return { ...data, ...subset };
   }) as GMerge<FI, FO>;
 

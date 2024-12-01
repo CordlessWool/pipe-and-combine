@@ -55,6 +55,6 @@ export type MergeObjects<A, B> = {
 /**
  * Generics
  */
-export type GMerge<I, O> = ((data: I) => I & O) & {
+export type GMerge<I, O> = ((data: I) => Promise<I & O>) & {
   __brand: "GMerge";
 };
