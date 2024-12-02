@@ -52,9 +52,28 @@ export type MergeObjects<A, B> = {
       : never;
 };
 
+export type PropablyPromise<R, B> = B extends true ? Promise<R> : R;
+
+type IsAsyncFunction<T> = T extends (...args: any[]) => Promise<any>
+  ? true
+  : false;
+
+export type HasAsyncFunction<T extends AnyFunction[]> = T extends [
+  infer First,
+  ...infer Rest,
+]
+  ? IsAsyncFunction<First> extends true
+    ? true
+    : HasAsyncFunction<Rest>
+  : false;
+
 /**
  * Generics
  */
-export type GMerge<I, O> = ((data: I) => Promise<I & O>) & {
+export type GMerge<I, O> = ((data: I) => I & O) & {
+  __brand: "GMerge";
+};
+
+export type GMergeAsync<I, O> = ((data: I) => Promise<I & O>) & {
   __brand: "GMerge";
 };

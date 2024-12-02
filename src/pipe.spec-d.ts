@@ -1,5 +1,5 @@
 import { test, describe, assertType, expectTypeOf } from "vitest";
-import { asyncPipe, pipe, preparePipe } from "./pipe";
+import { pipe, preparePipe } from "./pipe";
 import { awit } from "./helpers";
 import { g as gm } from "./helpers";
 import { addDate } from "./helpers/generics";
@@ -85,10 +85,8 @@ describe("asyncPipe", () => {
       new Promise<number>((resolve) => setTimeout(() => resolve(x * x), 100));
     const toStr = async (x: number) => x.toString();
 
-    const pipeline = asyncPipe(double, increment, square, increment, toStr);
-    expectTypeOf(pipeline)
-      .parameter(0)
-      .toEqualTypeOf<number | Promise<number>>();
+    const pipeline = pipe(double, increment, square, increment, toStr);
+    expectTypeOf(pipeline).parameter(0).toEqualTypeOf<number>();
     expectTypeOf(pipeline).returns.toEqualTypeOf<Promise<string>>();
     assertType<Promise<string>>(pipeline(2));
   });
@@ -116,7 +114,7 @@ describe("asyncPipe", () => {
         };
       });
 
-    const pipeline = asyncPipe(
+    const pipeline = pipe(
       init(),
       addStartupTime(),
       pause(1),

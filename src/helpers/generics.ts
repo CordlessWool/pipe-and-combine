@@ -1,4 +1,4 @@
-import { AnyObject, GMerge } from "../types";
+import { AnyObject, GMerge, GMergeAsync, MaybePromise } from "../types";
 
 /**
  * Generic merge function
@@ -7,13 +7,25 @@ import { AnyObject, GMerge } from "../types";
  * @param fu - The function to merge
  * @returns
  */
-export const g = <const FI extends AnyObject, FO>(
+export function g<const FI extends AnyObject, FO>(
   fu: (args: FI) => FO,
-): GMerge<FI, FO> =>
-  (async (data) => {
-    const subset = await fu(data);
-    return { ...data, ...subset };
-  }) as GMerge<FI, FO>;
+): GMerge<FI, FO>;
+export function g<const FI extends AnyObject, FO>(
+  fu: (args: FI) => Promise<FO>,
+): GMergeAsync<FI, FO>;
+export function g<const FI extends AnyObject, FO>(
+  fu: (args: FI) => MaybePromise<FO>,
+) {
+  return fu.constructor.name === "AsyncFunction"
+    ? ((async (data) => {
+        const subset = await fu(data);
+        return { ...data, ...subset };
+      }) as GMergeAsync<FI, FO>)
+    : (((data) => {
+        const subset = fu(data);
+        return { ...data, ...subset };
+      }) as GMerge<FI, FO>);
+}
 
 /**
  * Adds a timestamp (Date) to the object
