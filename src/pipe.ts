@@ -2,8 +2,6 @@ import type {
   AnyFunction,
   LastIndex,
   Prev,
-  GMerge,
-  MergeObjects,
   PropablyPromise,
   HasAsyncFunction,
   GType,
@@ -19,9 +17,12 @@ import type {
 
 type PrevReturn<
   F extends readonly AnyFunction[],
-  X extends `${number}` | number
-> = F[Prev<X>] extends GType
-  ? GQueue<F[Prev<X>], PrevReturn<F, Prev<X>>>
+  X extends `${number}` | number,
+  I extends any[]
+> = X extends "0"
+  ? I
+  : F[Prev<X>] extends GType
+  ? GQueue<F[Prev<X>], PrevReturn<F, Prev<X>, I>>
   : ReturnType<F[Prev<X>]>;
 
 type PipeReduce<
@@ -42,21 +43,23 @@ type PipeArray<
         X extends `${LastIndex<T>}` ? TOutput : unknown
       >
     : X extends `${LastIndex<T>}` | LastIndex<T>
-    ? PipeReduce<[Awaited<PrevReturn<T, X>>], T[X], TOutput>
-    : PipeReduce<[Awaited<PrevReturn<T, X>>], T[X]>;
+    ? PipeReduce<[Awaited<PrevReturn<T, X, TInput>>], T[X], TOutput>
+    : PipeReduce<[Awaited<PrevReturn<T, X, TInput>>], T[X]>;
 };
 
 type PipeReturn<
   DefinedOutput,
-  F extends readonly AnyFunction[]
-> = PropablyPromise<PipeDefineOutput<DefinedOutput, F>, HasAsyncFunction<F>>;
+  F extends readonly AnyFunction[],
+  I extends any[] = Parameters<F[0]>
+> = PropablyPromise<PipeDefineOutput<DefinedOutput, F, I>, HasAsyncFunction<F>>;
 
 type PipeDefineOutput<
   DefinedOutput,
-  F extends readonly AnyFunction[]
+  F extends readonly AnyFunction[],
+  I extends any[] = Parameters<F[0]>
 > = DefinedOutput extends any
   ? F[LastIndex<F>] extends GType
-    ? GQueue<F[LastIndex<F>], PrevReturn<F, LastIndex<F>>>
+    ? GQueue<F[LastIndex<F>], PrevReturn<F, LastIndex<F>, I>>
     : Awaited<ReturnType<PipeArray<F>[LastIndex<F>]>>
   : DefinedOutput;
 
@@ -85,7 +88,7 @@ export const preparePipe =
     );
     return chain as (
       ...input: TInput extends any ? Parameters<T[0]> : TInput
-    ) => PipeReturn<TOutput, T>;
+    ) => PipeReturn<TOutput, T, TInput>;
   };
 
 /**

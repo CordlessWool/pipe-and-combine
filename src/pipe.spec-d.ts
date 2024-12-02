@@ -1,7 +1,7 @@
 import { test, describe, assertType, expectTypeOf } from "vitest";
 import { pipe, preparePipe } from "./pipe";
 import { g as gm } from "./helpers";
-import { addDate } from "./helpers/generics";
+import { addDate, omit } from "./helpers/generics";
 
 describe("pipe", () => {
   test("should return string", () => {
@@ -43,6 +43,8 @@ describe("pipe", () => {
         };
       });
 
+    const addHello = () => gm(() => ({ hello: "test" }));
+
     const currentToString = () =>
       gm((data: { current: Date }) => {
         return {
@@ -56,7 +58,9 @@ describe("pipe", () => {
       addDate("current"),
       timeDiff(),
       currentToString(),
+      addHello(),
       addDate("current"),
+      omit("hello")
     );
 
     expectTypeOf(pipeline).returns.toEqualTypeOf<{
@@ -111,7 +115,7 @@ describe("asyncPipe", () => {
       pause(1),
       addDate("current"),
       timeDiff(),
-      currentToString(),
+      currentToString()
     );
 
     expectTypeOf(pipeline).returns.toEqualTypeOf<
@@ -140,7 +144,7 @@ describe("preparePipe", () => {
     const transformer = pipe(
       (i: string): number => Number(i),
       (i: number) => i + 1,
-      (i: number) => i.toString(),
+      (i: number) => i.toString()
     );
     expectTypeOf(transformer).parameter(0).toEqualTypeOf<string>();
     expectTypeOf(transformer).returns.toEqualTypeOf<string>();
@@ -152,7 +156,7 @@ describe("preparePipe", () => {
       // @ts-expect-error
       (i: string): number => Number(i),
       (i: number) => i + 1,
-      (i: number) => i.toString(),
+      (i: number) => i.toString()
     );
     expectTypeOf(transformer).parameter(0).toEqualTypeOf<string>();
     expectTypeOf(transformer).returns.toEqualTypeOf<string>();
@@ -165,7 +169,7 @@ describe("preparePipe", () => {
       (i: string): number => Number(i),
       (i: number) => i + 1,
       // @ts-expect-error
-      (i: number) => i.toString(),
+      (i: number) => i.toString()
     );
     expectTypeOf(transformer).parameter(0).toEqualTypeOf<string>();
     expectTypeOf(transformer).returns.toEqualTypeOf<string>();
@@ -178,7 +182,7 @@ describe("preparePipe", () => {
       // @ts-expect-error
       (i: string): number => Number(i),
       (i: number) => i + 1,
-      (i: number) => i.toString(),
+      (i: number) => i.toString()
     );
     expectTypeOf(transformer).parameter(0).toEqualTypeOf<string>();
     expectTypeOf(transformer).returns.toEqualTypeOf<string>();

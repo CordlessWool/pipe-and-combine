@@ -49,16 +49,18 @@ export const addDate = <FI extends AnyObject, T extends string>(tag: T) =>
       } as { [x in T]: Date })
   );
 
-export const omit =
-  <K extends string[]>(...keys: K) =>
-  <T extends KeyAnyObject<K>>(obj: T) =>
+export const omit = <T extends KeyAnyObject<K>, K extends string[]>(
+  ...keys: K
+) =>
+  (<O extends T>(obj: O) =>
     Object.fromEntries(
       Object.entries(obj).filter(([key]) => !keys.includes(key))
-    ) as GOmit<T, K[number]>;
+    )) as GOmit<any, K[number]>;
 
-export const pick =
-  <K extends string[]>(...keys: K) =>
-  <T extends KeyAnyObject<K>>(obj: T) =>
+export const pick = <T extends KeyAnyObject<K>, K extends string[]>(
+  ...keys: K
+) =>
+  ((obj: T) =>
     Object.fromEntries(
       Object.entries(obj).filter(([key]) => keys.includes(key))
-    ) as GPick<T, K[number]>;
+    )) as GPick<any, K[number]>;
