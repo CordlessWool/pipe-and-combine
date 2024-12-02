@@ -81,8 +81,12 @@ export type GMergeAsync<I, O> = ((data: I) => Promise<I & O>) & {
   __brand: "GMerge";
 };
 
-export type GOmit<I, K extends string> = Omit<I, K> & { __brand: "GOmit" };
-export type GPick<I, K extends string> = Pick<I, K> & { __brand: "GPick" };
+export type GOmit<I, K extends string> = ((data: I) => Omit<I, K>) & {
+  __brand: "GOmit";
+};
+export type GPick<I, K extends string> = ((data: I) => Pick<I, K>) & {
+  __brand: "GPick";
+};
 
 export type GType =
   | GMerge<any, any>
