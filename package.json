@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "build": "rollup -c",
-    "prepublishOnly": "bun run build && publint",
+    "prepublishOnly": "pnpm run build && publint",
     "test": "vitest",
     "tt": "vitest --typecheck",
     "ci:test": "pnpm run test && pnpm run tt",
