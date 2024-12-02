@@ -11,7 +11,7 @@
     "test": "vitest",
     "tt": "vitest --typecheck",
     "ci:test": "pnpm run test && pnpm run tt",
-    "ci:publish": "pnpm publish"
+    "ci:release": "pnpm publish"
   },
   "keywords": [
     "pipe",
