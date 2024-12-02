@@ -5,7 +5,7 @@ import { g } from "./generics";
  * Wrapps around a function and deserializes an array as arguments.
  * e.g. dispel(fu)([1, 2, 3]) is equal to fu(1, 2, 3)
  */
-export const dispel =
+export const apply =
   <T extends AnyFunction>(fu: T) =>
   (args: Parameters<T>): ReturnType<T> => {
     if (args.length === 1 && Array.isArray(args[0])) {
@@ -28,5 +28,5 @@ export const addDate = <FI extends AnyObject, T extends string>(tag: T) =>
     () =>
       ({
         [tag]: new Date(),
-      }) as { [x in T]: Date },
+      } as { [x in T]: Date })
   );
