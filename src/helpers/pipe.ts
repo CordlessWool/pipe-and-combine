@@ -3,7 +3,7 @@ import { g } from "./generics";
 
 /**
  * Wrapps around a function and deserializes an array as arguments.
- * e.g. dispel(fu)([1, 2, 3]) is equal to fu(1, 2, 3)
+ * e.g. apply(fu)([1, 2, 3]) is equal to fu(1, 2, 3)
  */
 export const apply =
   <T extends AnyFunction>(fu: T) =>

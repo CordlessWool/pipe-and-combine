@@ -1,6 +1,6 @@
 import { test, describe, expect } from "vitest";
 import { pipe } from "./pipe";
-import { dispel } from "./helpers";
+import { apply } from "./helpers";
 
 describe("pipe", () => {
   const inc = (by: number) => (x: number) => x + by;
@@ -13,7 +13,7 @@ describe("pipe", () => {
     expect(pipeline(2)).toBe("7");
   });
 
-  test("dispel", () => {
+  test("apply", () => {
     const double = (x: number) => x * 2;
     const increment = (x: number) => x + 1;
     const rest = (x: number): [number, number] => {
@@ -23,7 +23,7 @@ describe("pipe", () => {
     };
     const multiply = (x: number, y: number) => x * y;
     const toStr = (x: number) => x.toString();
-    const pipeline = pipe(double, increment, rest, dispel(multiply), toStr);
+    const pipeline = pipe(double, increment, rest, apply(multiply), toStr);
     expect(pipeline(1)).toBe("2");
   });
 
