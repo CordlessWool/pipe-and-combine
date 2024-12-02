@@ -10,6 +10,7 @@
     "prepublishOnly": "bun run build && publint",
     "test": "vitest",
     "tt": "vitest --typecheck"
+    "ci:test": "pnpm run test && pnpm run tt",
   },
   "keywords": [
     "pipe",
