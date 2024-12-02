@@ -139,3 +139,7 @@ const pipeline = pipe(init, addDate('createdAt'), count("cool"));
 
 At least it do a merge of the input and the output of the given function, but on the type level it do much more.
 It brand the function to know how to henadle the type. Because otherwise information about the type is lost.
+
+## Changelog
+
+You can find the changelog in the [CHANGELOG.md](https://github.com/CordlessWool/pipe-and-combine/blob/main/CHANGELOG.md) file.
