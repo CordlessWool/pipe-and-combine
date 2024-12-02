@@ -69,7 +69,8 @@ export const preparePipe =
     const [first, ...rest] = fus;
     const chain = rest.reduce(
       (chain, f) =>
-        chain.constructor.name === "AsyncFunction"
+        chain.constructor.name === "AsyncFunction" ||
+        f.constructor.name === "AsyncFunction"
           ? async (...args) => {
               const data = await chain(...args);
               return f(data);
