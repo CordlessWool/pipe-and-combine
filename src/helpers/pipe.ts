@@ -1,20 +1,5 @@
-import { AnyFunction, AnyObject, ArrayMaybePromise } from "../types";
+import { AnyFunction, AnyObject } from "../types";
 import { g } from "./generics";
-
-/**
- * Wrapps around a function and awaits the input parameters.
- * The return value is a promise, which resolves to the return value of the function.
- *
- * @param fu - The function to be wrapped.
- */
-export const awit =
-  <T extends AnyFunction<any[], Promise<any>>>(fu: T) =>
-  async (
-    ...maybePromise: ArrayMaybePromise<Parameters<T>>
-  ): Promise<Awaited<ReturnType<T>>> => {
-    const args = await Promise.all(maybePromise);
-    return fu(...args);
-  };
 
 /**
  * Wrapps around a function and deserializes an array as arguments.

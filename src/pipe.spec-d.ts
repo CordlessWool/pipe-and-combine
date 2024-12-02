@@ -1,6 +1,5 @@
 import { test, describe, assertType, expectTypeOf } from "vitest";
 import { pipe, preparePipe } from "./pipe";
-import { awit } from "./helpers";
 import { g as gm } from "./helpers";
 import { addDate } from "./helpers/generics";
 
@@ -17,23 +16,15 @@ describe("pipe", () => {
     assertType<string>(pipeline(2));
   });
 
-  test("pipe with awit (await)", () => {
+  test("pipe return is detected automaticly to be async", () => {
     const double = async (x: number) => x * 2;
     const increment = async (x: number) => Promise.resolve(x + 1);
     const square = async (x: number) =>
       new Promise<number>((resolve) => setTimeout(() => resolve(x * x), 100));
     const toStr = async (x: number) => x.toString();
 
-    const pipeline = pipe(
-      awit(double),
-      awit(increment),
-      awit(square),
-      awit(increment),
-      awit(toStr),
-    );
-    expectTypeOf(pipeline)
-      .parameter(0)
-      .toEqualTypeOf<number | Promise<number>>();
+    const pipeline = pipe(double, increment, square, increment, toStr);
+    expectTypeOf(pipeline).parameter(0).toEqualTypeOf<number>();
     expectTypeOf(pipeline).returns.toEqualTypeOf<Promise<string>>();
     assertType<Promise<string>>(pipeline(2));
   });

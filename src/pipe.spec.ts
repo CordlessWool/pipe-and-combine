@@ -1,6 +1,6 @@
 import { test, describe, expect } from "vitest";
 import { pipe } from "./pipe";
-import { dispel, awit } from "./helpers";
+import { dispel } from "./helpers";
 
 describe("pipe", () => {
   const inc = (by: number) => (x: number) => x + by;
@@ -27,15 +27,14 @@ describe("pipe", () => {
     expect(pipeline(1)).toBe("2");
   });
 
-  test("awit", async () => {
+  test("pipe auto async", async () => {
     const increment = (x: number) => x + 1;
-    const squareSync = (x: number) => x * x;
     const square = (x: number): Promise<number> =>
-      new Promise((resolve) => setTimeout(() => resolve(x * x), 100));
+      new Promise((resolve) => setTimeout(() => resolve(x * x), 10));
     const toStr = async (x: number): Promise<string> =>
-      new Promise((resolve) => setTimeout(() => resolve(x.toString()), 100));
+      new Promise((resolve) => setTimeout(() => resolve(x.toString()), 10));
 
-    const pipeline = pipe(increment, awit(square), awit(toStr));
+    const pipeline = pipe(increment, square, toStr);
     await expect(pipeline(2)).resolves.toBe("9");
   });
 });
@@ -80,14 +79,14 @@ describe("performance", () => {
     console.timeEnd("Created");
   });
 
-  test("async without pipe", () => {
-    const as = (a: number) => (x: number) => x + a;
+  test("async without pipe", async () => {
+    const as = (a: number) => async (x: number) => x + a;
     console.time("Created Async Without Pipe");
-    const pipeline = (x: number) => {
+    const pipeline = async (x: number) => {
       const b = add(2)(x);
       const c = sub(3)(b);
       const d = add(1)(c);
-      const a1 = as(2)(d);
+      const a1 = await as(2)(d);
 
       const e = mul(2)(a1);
       const f = div(2)(e);
@@ -95,7 +94,7 @@ describe("performance", () => {
     };
     console.timeLog("Created Async Without Pipe");
     for (let i = 0; i < 100000; i++) {
-      pipeline(i);
+      await pipeline(i);
     }
     console.timeEnd("Created Async Without Pipe");
   });
