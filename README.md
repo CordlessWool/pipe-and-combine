@@ -87,3 +87,55 @@ const str = (a: number) => a.toString();
 const c = combine(add, multiply, divide, other, str);
 expect(c(1, 2)).toEqual([3, 2, 0.5, "-1", "1"]);
 ```
+
+### Helper functions
+
+#### apply
+
+`apply` will take a function and apply an array returned by an other function as arguments.
+
+```ts
+const init = () => ["text", 5];
+const repeat = (text: string, times: number) => text.repeat(times);
+const pipeline = pipe(init, apply(repeat));
+expect(pipeline()).toBe("texttexttexttexttext");
+```
+
+#### map
+
+`map` could iterate over an array and call a function for each element, like `Array.prototype.map`.
+
+#### addDate (generic) (experimental)
+
+This function adds a date to an object and returns the object with the date.
+It has a required parameter `key` to define the name of key where the date should be stored.
+
+```ts
+pipe(init(), addDate("createdAt"));
+// addDate will add a filed createdAt to the object given by init
+```
+
+## Experimental
+
+With Version 0.7.x we introduced a new experimental feature to handle generic types.
+This is a very powerful feature, but also very complex to get typesafe.
+
+```ts
+import { pipe, addDate, g } from "pipe-and-combine";
+type InitObject = { text: string };
+const init = () => () => ({ text: "my cool data object " });
+const count = (word: string) =>
+  g((data: { text: string }) => {
+    // just a simple example to show how to handle generic types
+    return {
+      amount: data.text.split(word).length - 1;
+    }
+  };
+
+const pipeline = pipe(init, addDate('createdAt'), count("cool"));
+```
+
+### What is the `g` function?
+
+At least it do a merge of the input and the output of the given function, but on the type level it do much more.
+It brand the function to know how to henadle the type. Because otherwise information about the type is lost.
