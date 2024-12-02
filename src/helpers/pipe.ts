@@ -23,7 +23,7 @@ export const map =
   (arr: T[]) =>
     arr.map(fn);
 
-const addDate = <FI extends AnyObject, T extends string>(tag: T) =>
+export const addDate = <FI extends AnyObject, T extends string>(tag: T) =>
   g<FI, { [x in T]: Date }>(
     () =>
       ({
