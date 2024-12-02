@@ -1,4 +1,12 @@
-import { AnyObject, GMerge, GMergeAsync, MaybePromise } from "../types";
+import {
+  AnyObject,
+  GMerge,
+  GMergeAsync,
+  GOmit,
+  GPick,
+  KeyAnyObject,
+  MaybePromise,
+} from "../types";
 
 /**
  * Generic merge function
@@ -8,13 +16,13 @@ import { AnyObject, GMerge, GMergeAsync, MaybePromise } from "../types";
  * @returns
  */
 export function g<const FI extends AnyObject, FO>(
-  fu: (args: FI) => FO,
+  fu: (args: FI) => FO
 ): GMerge<FI, FO>;
 export function g<const FI extends AnyObject, FO>(
-  fu: (args: FI) => Promise<FO>,
+  fu: (args: FI) => Promise<FO>
 ): GMergeAsync<FI, FO>;
 export function g<const FI extends AnyObject, FO>(
-  fu: (args: FI) => MaybePromise<FO>,
+  fu: (args: FI) => MaybePromise<FO>
 ) {
   return fu.constructor.name === "AsyncFunction"
     ? ((async (data) => {
@@ -38,5 +46,19 @@ export const addDate = <FI extends AnyObject, T extends string>(tag: T) =>
     () =>
       ({
         [tag]: new Date(),
-      }) as { [x in T]: Date },
+      } as { [x in T]: Date })
   );
+
+export const omit =
+  <K extends string[]>(...keys: K) =>
+  <T extends KeyAnyObject<K>>(obj: T) =>
+    Object.fromEntries(
+      Object.entries(obj).filter(([key]) => !keys.includes(key))
+    ) as GOmit<T, K[number]>;
+
+export const pick =
+  <K extends string[]>(...keys: K) =>
+  <T extends KeyAnyObject<K>>(obj: T) =>
+    Object.fromEntries(
+      Object.entries(obj).filter(([key]) => keys.includes(key))
+    ) as GPick<T, K[number]>;
