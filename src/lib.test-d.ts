@@ -1,5 +1,6 @@
 import { test, describe, expectTypeOf } from "vitest";
-import { dispel, preparePipe } from "./pipe";
+import { preparePipe } from "./pipe";
+import { apply } from "./helpers";
 import { gate } from "./gate";
 
 describe("type integration", () => {
@@ -25,9 +26,9 @@ describe("type integration", () => {
     const pipeRunner = preparedPipe(
       gate(
         isAuthorized("isAdmin", true),
-        isAuthorized("company", "Cotton-Coding"),
+        isAuthorized("company", "Cotton-Coding")
       ),
-      dispel((user: User) => user.company ?? ""),
+      apply((user: User) => user.company ?? "")
     );
     expectTypeOf(pipeRunner).parameter(0).toEqualTypeOf<User>();
     expectTypeOf(pipeRunner(user)).toEqualTypeOf<string>();
@@ -46,9 +47,9 @@ describe("type integration", () => {
     const pipeRunner = preparedPipe(
       gate(
         isAuthorized("isAdmin", true),
-        isAuthorized("company", "Cotton-Coding"),
+        isAuthorized("company", "Cotton-Coding")
       ),
-      dispel((user: User) => user.company ?? ""),
+      apply((user: User) => user.company ?? "")
     );
     expectTypeOf(pipeRunner).parameter(0).toEqualTypeOf<User>();
     expectTypeOf(pipeRunner(user)).toEqualTypeOf<string>();
