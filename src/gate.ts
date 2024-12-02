@@ -1,5 +1,5 @@
 import { combine, type CombineArray } from "./combine";
-import type { AnyFunction } from "./helper";
+import type { AnyFunction } from "./types";
 
 export class GateException<T extends any[]> extends Error {
   public readonly result: T;

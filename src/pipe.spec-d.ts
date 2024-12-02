@@ -1,5 +1,7 @@
 import { test, describe, assertType, expectTypeOf } from "vitest";
-import { asyncPipe, awit, pipe, preparePipe } from "./pipe";
+import { pipe, preparePipe } from "./pipe";
+import { g as gm } from "./helpers";
+import { addDate } from "./helpers/generics";
 
 describe("pipe", () => {
   test("should return string", () => {
@@ -14,25 +16,55 @@ describe("pipe", () => {
     assertType<string>(pipeline(2));
   });
 
-  test("pipe with awit (await)", () => {
+  test("pipe return is detected automaticly to be async", () => {
     const double = async (x: number) => x * 2;
     const increment = async (x: number) => Promise.resolve(x + 1);
     const square = async (x: number) =>
       new Promise<number>((resolve) => setTimeout(() => resolve(x * x), 100));
     const toStr = async (x: number) => x.toString();
 
-    const pipeline = pipe(
-      awit(double),
-      awit(increment),
-      awit(square),
-      awit(increment),
-      awit(toStr),
-    );
-    expectTypeOf(pipeline)
-      .parameter(0)
-      .toEqualTypeOf<number | Promise<number>>();
+    const pipeline = pipe(double, increment, square, increment, toStr);
+    expectTypeOf(pipeline).parameter(0).toEqualTypeOf<number>();
     expectTypeOf(pipeline).returns.toEqualTypeOf<Promise<string>>();
     assertType<Promise<string>>(pipeline(2));
+  });
+
+  test("pipe with generics", () => {
+    const init = () => () => ({ test: "test" });
+    const addStartupTime = (time: Date = new Date()) =>
+      gm(() => ({
+        startup: time,
+      }));
+    const timeDiff = () =>
+      gm((data: { startup: Date; current: Date }) => {
+        return {
+          ...data,
+          diff: new Date(data.current.getTime() - data.startup.getTime()),
+        };
+      });
+
+    const currentToString = () =>
+      gm((data: { current: Date }) => {
+        return {
+          current: data.current.toString(),
+        };
+      });
+
+    const pipeline = pipe(
+      init(),
+      addStartupTime(),
+      addDate("current"),
+      timeDiff(),
+      currentToString(),
+      addDate("current"),
+    );
+
+    expectTypeOf(pipeline).returns.toEqualTypeOf<{
+      current: Date;
+      startup: Date;
+      diff: Date;
+      test: string;
+    }>();
   });
 });
 
@@ -44,12 +76,52 @@ describe("asyncPipe", () => {
       new Promise<number>((resolve) => setTimeout(() => resolve(x * x), 100));
     const toStr = async (x: number) => x.toString();
 
-    const pipeline = asyncPipe(double, increment, square, increment, toStr);
-    expectTypeOf(pipeline)
-      .parameter(0)
-      .toEqualTypeOf<number | Promise<number>>();
+    const pipeline = pipe(double, increment, square, increment, toStr);
+    expectTypeOf(pipeline).parameter(0).toEqualTypeOf<number>();
     expectTypeOf(pipeline).returns.toEqualTypeOf<Promise<string>>();
     assertType<Promise<string>>(pipeline(2));
+  });
+
+  test("async pipe with generics", () => {
+    const init = () => () => ({ test: "test" });
+    const addStartupTime = (time: Date = new Date()) =>
+      gm(async () => ({
+        startup: time,
+      }));
+    const pause = (ms: number) =>
+      gm(() => new Promise<{}>((r) => setTimeout(() => r({}), ms)));
+    const timeDiff = () =>
+      gm(async (data: { startup: Date; current: Date }) => {
+        return {
+          ...data,
+          diff: new Date(data.current.getTime() - data.startup.getTime()),
+        };
+      });
+
+    const currentToString = () =>
+      gm((data: { current: Date }) => {
+        return {
+          current: data.current.toString(),
+        };
+      });
+
+    const pipeline = pipe(
+      init(),
+      addStartupTime(),
+      pause(1),
+      addDate("current"),
+      timeDiff(),
+      currentToString(),
+    );
+
+    expectTypeOf(pipeline).returns.toEqualTypeOf<
+      Promise<{
+        test: string;
+        startup: Date;
+        current: string;
+        diff: Date;
+      }>
+    >();
   });
 });
 

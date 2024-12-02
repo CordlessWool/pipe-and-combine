@@ -9,7 +9,9 @@
     "build": "rollup -c",
     "prepublishOnly": "bun run build && publint",
     "test": "vitest",
-    "tt": "vitest --typecheck"
+    "tt": "vitest --typecheck",
+    "ci:test": "pnpm run test && pnpm run tt",
+    "ci:publish": "pnpm publish"
   },
   "keywords": [
     "pipe",
@@ -26,15 +28,14 @@
     }
   },
   "devDependencies": {
-    "@types/bun": "latest",
-    "publint": "^0.2.11",
-    "rollup": "^4.24.0",
+    "@changesets/cli": "^2.27.10",
+    "publint": "^0.2.12",
+    "rollup": "^4.27.4",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.36.0",
-    "typescript": "^5.6.3",
-    "vitest": "^2.1.2"
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.6"
   },
-  "peerDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/CordlessWool/pipe-and-combine.git"

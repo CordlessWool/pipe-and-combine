@@ -1,4 +1,4 @@
-import type { AnyFunction } from "./helper";
+import type { AnyFunction } from "./types";
 
 type CombineMap<
   AF extends AnyFunction,
