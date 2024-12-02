@@ -3,7 +3,7 @@
   "main": "dist/lib.js",
   "types": "dist/entry.d.ts",
   "type": "module",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "license": "Apache-2.0",
   "scripts": {
     "build": "rollup -c",

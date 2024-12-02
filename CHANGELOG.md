@@ -1,5 +1,11 @@
 # pipe-and-combine
 
+## 0.7.2
+
+### Patch Changes
+
+- 985b262: Fix: Rollup didn't move type.d.ts to dist folder
+
 ## 0.7.1
 
 ### Patch Changes
