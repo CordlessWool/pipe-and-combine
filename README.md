@@ -115,6 +115,22 @@ pipe(init(), addDate("createdAt"));
 // addDate will add a filed createdAt to the object given by init
 ```
 
+#### omit
+
+Removes one or more keys from an object.
+
+```ts
+pipe(omit("text", "createdAt"));
+```
+
+#### pick
+
+Picks one or more keys from an object.
+
+```ts
+pipe(pick("text", "createdAt"));
+```
+
 ## Experimental
 
 With Version 0.7.x we introduced a new experimental feature to handle generic types.
