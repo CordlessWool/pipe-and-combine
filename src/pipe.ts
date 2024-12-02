@@ -6,6 +6,8 @@ import type {
   MergeObjects,
   PropablyPromise,
   HasAsyncFunction,
+  GType,
+  GQueue,
 } from "./types";
 
 /**
@@ -16,20 +18,22 @@ import type {
  */
 
 type PrevReturn<
-  T extends readonly AnyFunction[],
-  X extends `${number}` | number,
-> =
-  T[Prev<X>] extends GMerge<any, infer GO>
-    ? MergeObjects<PrevReturn<T, Prev<X>>, Awaited<GO>>
-    : ReturnType<T[Prev<X>]>;
+  F extends readonly AnyFunction[],
+  X extends `${number}` | number
+> = F[Prev<X>] extends GType
+  ? GQueue<F[Prev<X>], PrevReturn<F, Prev<X>>>
+  : ReturnType<F[Prev<X>]>;
 
-type PipeReduce<AI extends any[], BF extends AnyFunction, BO = unknown> =
-  BF extends AnyFunction<AI, BO> ? BF : (...value: AI) => BO;
+type PipeReduce<
+  AI extends any[],
+  BF extends AnyFunction,
+  BO = unknown
+> = BF extends AnyFunction<AI, BO> ? BF : (...value: AI) => BO;
 
 type PipeArray<
   T extends readonly AnyFunction[],
   TInput extends any[] = Parameters<T[0]>,
-  TOutput = ReturnType<T[LastIndex<T>]>,
+  TOutput = ReturnType<T[LastIndex<T>]>
 > = {
   [X in keyof T]: X extends "0" | 0
     ? PipeReduce<
@@ -38,21 +42,21 @@ type PipeArray<
         X extends `${LastIndex<T>}` ? TOutput : unknown
       >
     : X extends `${LastIndex<T>}` | LastIndex<T>
-      ? PipeReduce<[Awaited<PrevReturn<T, X>>], T[X], TOutput>
-      : PipeReduce<[Awaited<PrevReturn<T, X>>], T[X]>;
+    ? PipeReduce<[Awaited<PrevReturn<T, X>>], T[X], TOutput>
+    : PipeReduce<[Awaited<PrevReturn<T, X>>], T[X]>;
 };
 
 type PipeReturn<
   DefinedOutput,
-  F extends readonly AnyFunction[],
+  F extends readonly AnyFunction[]
 > = PropablyPromise<PipeDefineOutput<DefinedOutput, F>, HasAsyncFunction<F>>;
 
 type PipeDefineOutput<
   DefinedOutput,
-  F extends readonly AnyFunction[],
+  F extends readonly AnyFunction[]
 > = DefinedOutput extends any
-  ? F[LastIndex<F>] extends GMerge<any, infer GO>
-    ? MergeObjects<PrevReturn<F, LastIndex<F>>, Awaited<GO>>
+  ? F[LastIndex<F>] extends GType
+    ? GQueue<F[LastIndex<F>], PrevReturn<F, LastIndex<F>>>
     : Awaited<ReturnType<PipeArray<F>[LastIndex<F>]>>
   : DefinedOutput;
 
@@ -77,7 +81,7 @@ export const preparePipe =
               return f(data);
             }
           : (...args) => f(chain(...args)),
-      first,
+      first
     );
     return chain as (
       ...input: TInput extends any ? Parameters<T[0]> : TInput

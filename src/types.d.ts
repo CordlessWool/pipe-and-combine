@@ -1,6 +1,9 @@
 export type Increment<N extends number> = [...BuildArray<N>, unknown]["length"];
 
 export type AnyObject = Record<string | number | symbol, any>;
+export type KeyAnyObject<T extends readonly (string | number | symbol)[]> = {
+  [X in keyof T as T[x]]: any;
+};
 
 export type Decrement<N extends number> = N extends 0
   ? never // If the number is 0, there's nothing to decrement
@@ -77,3 +80,22 @@ export type GMerge<I, O> = ((data: I) => I & O) & {
 export type GMergeAsync<I, O> = ((data: I) => Promise<I & O>) & {
   __brand: "GMerge";
 };
+
+export type GOmit<I, K extends string> = Omit<I, K> & { __brand: "GOmit" };
+export type GPick<I, K extends string> = Pick<I, K> & { __brand: "GPick" };
+
+export type GType =
+  | GMerge<any, any>
+  | GMergeAsync<any, any>
+  | GOmit<any, any>
+  | GPick<any, any>;
+
+export type GQueue<F, I> = F extends
+  | GMerge<any, infer B>
+  | GMergeAsync<any, infer B>
+  ? MergeObjects<I, Awaited<B>>
+  : F extends GOmit<any, infer K>
+  ? Omit<I, K>
+  : F extends GPick<any, infer K>
+  ? Pick<I, K>
+  : never;
