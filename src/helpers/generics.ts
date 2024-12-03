@@ -6,6 +6,7 @@ import {
   GPick,
   KeyAnyObject,
   MaybePromise,
+  ObjectFromArrays,
 } from "../types";
 
 /**
@@ -76,3 +77,39 @@ export const pick = <T extends KeyAnyObject<K>, K extends string[]>(
     Object.fromEntries(
       Object.entries(obj).filter(([key]) => keys.includes(key))
     )) as GPick<any, K[number]>;
+
+type MapPick<T, K extends (keyof T)[]> = {
+  [P in keyof K]: K[P] extends keyof T ? T[K[P]] : never;
+};
+
+const mapPick = <T, K extends (keyof T)[]>(
+  obj: T,
+  pick: Readonly<K>
+): MapPick<T, K> => pick.map((p) => obj[p]) as MapPick<T, K>;
+
+/**
+ * Execute a function with picked variables
+ *
+ * @param fu - function to execute
+ * @param pick - variables to pick from the data object
+ * @returns - Returns the data object that given to the function
+ */
+export const exec = <
+  const TArgs extends unknown[],
+  const TPick extends string[],
+  GI extends ObjectFromArrays<TPick, TArgs> = ObjectFromArrays<TPick, TArgs>
+>(
+  fu: (...args: TArgs) => unknown | Promise<unknown>,
+  pick: TPick
+) =>
+  fu.constructor.name === "AsyncFunction"
+    ? g(async (data: GI) => {
+        const dataArray = mapPick<GI, TPick>(data, pick) as TArgs;
+        await fu(...dataArray);
+        return {};
+      })
+    : g((data: GI) => {
+        const dataArray = mapPick<GI, TPick>(data, pick) as TArgs;
+        fu(...dataArray);
+        return {};
+      });

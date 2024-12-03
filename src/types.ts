@@ -70,6 +70,24 @@ export type HasAsyncFunction<T extends readonly AnyFunction[]> = T extends [
     : HasAsyncFunction<Rest>
   : false;
 
+export type ObjectFromEntries<T extends Array<readonly [string, unknown]>> = {
+  [X in T[number] as X[0]]: X[1];
+};
+
+export type ArraysToEntries<
+  K extends string[],
+  V extends unknown[]
+> = K["length"] extends V["length"]
+  ? {
+      [X in keyof K]: [K[X], X extends keyof V ? V[X] : never];
+    }
+  : never;
+
+export type ObjectFromArrays<
+  K extends string[],
+  V extends unknown[]
+> = ObjectFromEntries<ArraysToEntries<K, V>>;
+
 /**
  * Generics
  */
