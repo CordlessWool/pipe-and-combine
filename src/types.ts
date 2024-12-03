@@ -2,7 +2,7 @@ export type Increment<N extends number> = [...BuildArray<N>, unknown]["length"];
 
 export type AnyObject = Record<string | number | symbol, any>;
 export type KeyAnyObject<T extends readonly (string | number | symbol)[]> = {
-  [X in keyof T as T[x]]: any;
+  [X in keyof T as T[X] extends string | number | symbol ? T[X] : never]: any;
 };
 
 export type Decrement<N extends number> = N extends 0
@@ -63,7 +63,7 @@ type IsAsyncFunction<T> = T extends (...args: any[]) => Promise<any>
 
 export type HasAsyncFunction<T extends readonly AnyFunction[]> = T extends [
   infer First,
-  ...infer Rest
+  ...infer Rest extends readonly AnyFunction[]
 ]
   ? IsAsyncFunction<First> extends true
     ? true
@@ -84,7 +84,7 @@ export type GMergeAsync<I, O> = ((data: I) => Promise<I & O>) & {
 export type GOmit<I, K extends string> = ((data: I) => Omit<I, K>) & {
   __brand: "GOmit";
 };
-export type GPick<I, K extends string> = ((data: I) => Pick<I, K>) & {
+export type GPick<I, K extends keyof I> = ((data: I) => Pick<I, K>) & {
   __brand: "GPick";
 };
 
@@ -101,5 +101,5 @@ export type GQueue<F, I> = F extends
   : F extends GOmit<any, infer K>
   ? Omit<I, K>
   : F extends GPick<any, infer K>
-  ? Pick<I, K>
+  ? Pick<I, K extends keyof I ? K : never>
   : never;

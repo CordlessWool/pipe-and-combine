@@ -1,5 +1,4 @@
-import { AnyFunction, AnyObject } from "../types";
-import { g } from "./generics";
+import { AnyFunction } from "../types";
 
 /**
  * Wrapps around a function and deserializes an array as arguments.
@@ -22,11 +21,3 @@ export const map =
   <T, U>(fn: (arg: T) => U) =>
   (arr: T[]) =>
     arr.map(fn);
-
-export const addDate = <FI extends AnyObject, T extends string>(tag: T) =>
-  g<FI, { [x in T]: Date }>(
-    () =>
-      ({
-        [tag]: new Date(),
-      } as { [x in T]: Date })
-  );
