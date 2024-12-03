@@ -1,5 +1,12 @@
 # pipe-and-combine
 
+## 0.7.3
+
+### Patch Changes
+
+- 8fc8a15: Rename types.d.ts to types.ts to get error response. Rollup needs it propably to build up types
+- b366eeb: Add JSDocs for omit and pick
+
 ## 0.7.2
 
 ### Patch Changes
