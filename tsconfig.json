@@ -10,7 +10,7 @@
   ],
   "compilerOptions": {
     // Base configuration
-    "outDir": "./dist/esm",
+    "declarationDir": "./dist/types",
     "rootDir": "./src",
     "declaration": true,
 
