@@ -1,4 +1,4 @@
-import { test, describe, assertType, expectTypeOf, expect } from "vitest";
+import { test, describe, assertType, expect } from "vitest";
 import { g, addDate, omit, pick } from "./generics";
 
 describe("generics helper functions", () => {
