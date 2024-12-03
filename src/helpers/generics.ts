@@ -49,6 +49,12 @@ export const addDate = <FI extends AnyObject, T extends string>(tag: T) =>
       } as { [x in T]: Date })
   );
 
+/**
+ * Omit keys from an object
+ *
+ * @param keys - The keys to omit
+ * @returns The object without the omitted keys
+ */
 export const omit = <T extends KeyAnyObject<K>, K extends string[]>(
   ...keys: K
 ) =>
@@ -57,6 +63,12 @@ export const omit = <T extends KeyAnyObject<K>, K extends string[]>(
       Object.entries(obj).filter(([key]) => !keys.includes(key))
     )) as GOmit<any, K[number]>;
 
+/**
+ * Pick keys from an object
+ *
+ * @param keys - The keys to keep
+ * @returns The object with the picked keys
+ */
 export const pick = <T extends KeyAnyObject<K>, K extends string[]>(
   ...keys: K
 ) =>
