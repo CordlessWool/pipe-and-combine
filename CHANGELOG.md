@@ -1,5 +1,11 @@
 # pipe-and-combine
 
+## 0.7.5
+
+### Patch Changes
+
+- 7bf4abc: add exec function (experimantal and not documented)
+
 ## 0.7.4
 
 ### Patch Changes
