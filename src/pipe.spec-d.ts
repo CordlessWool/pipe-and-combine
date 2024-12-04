@@ -1,7 +1,7 @@
 import { test, describe, assertType, expectTypeOf } from "vitest";
 import { pipe, preparePipe } from "./pipe";
 import { g as gm } from "./helpers";
-import { addDate, omit } from "./helpers/generics";
+import { addDate, exec, omit } from "./helpers/generics";
 
 describe("pipe", () => {
   test("should return string", () => {
@@ -126,6 +126,55 @@ describe("asyncPipe", () => {
         diff: Date;
       }>
     >();
+  });
+
+  test("generic, async and complex types", () => {
+    type Other = {
+      name: string;
+    };
+
+    type NewProject = {
+      name: string;
+    };
+    type Project = {
+      id: string;
+      name: string;
+    };
+
+    const initPipe =
+      () =>
+      (data: {
+        random: { name: string };
+      }): { project: NewProject; other: Other } => ({
+        project: data.random,
+        other: {
+          name: "test",
+        },
+      });
+    const createProject = () =>
+      gm(
+        async (data: {
+          project: NewProject;
+        }): Promise<{ project: Project }> => {
+          return { project: { id: "1", ...data.project } };
+        }
+      );
+
+    const test = () =>
+      gm((data: { project: Project; timestamp: Date }) => {
+        return {};
+      });
+
+    createProject()(initPipe()({ random: { name: "test" } }));
+
+    const save = (project: Project, when: Date) => {};
+
+    const pipeline = pipe(
+      initPipe(),
+      createProject(),
+      addDate("timestamp"),
+      exec(save, ["project", "timestamp"])
+    );
   });
 });
 
