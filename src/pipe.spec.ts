@@ -58,25 +58,46 @@ describe("performance", () => {
   const mul = (a: number) => (x: number) => x * a;
   const div = (a: number) => (x: number) => x / a;
 
-  test("async pipe", () => {
+  test("async pipe", async () => {
     const as = (a: number) => async (x: number) => x + a;
     console.time("CreatedAsync");
     const pipeline = pipe(add(2), sub(3), add(1), as(2), mul(2), div(2));
     console.timeLog("CreatedAsync");
     for (let i = 0; i < 100000; i++) {
-      pipeline(i);
+      await pipeline(i);
     }
     console.timeEnd("CreatedAsync");
   });
 
   test("pipe", () => {
+    const as = (a: number) => (x: number) => x + a;
     console.time("Created");
-    const pipeline = pipe(add(2), sub(3), add(1), mul(2), div(2));
+    const pipeline = pipe(add(2), sub(3), add(1), as(2), mul(2), div(2));
     console.timeLog("Created");
     for (let i = 0; i < 100000; i++) {
       pipeline(i);
     }
     console.timeEnd("Created");
+  });
+
+  test("sync without pipe", () => {
+    const as = (a: number) => (x: number) => x + a;
+    console.time("Created sync Without Pipe");
+    const pipeline = (x: number) => {
+      const b = add(2)(x);
+      const c = sub(3)(b);
+      const d = add(1)(c);
+      const a1 = as(2)(d);
+
+      const e = mul(2)(a1);
+      const f = div(2)(e);
+      return f;
+    };
+    console.timeLog("Created sync Without Pipe");
+    for (let i = 0; i < 100000; i++) {
+      pipeline(i);
+    }
+    console.timeEnd("Created sync Without Pipe");
   });
 
   test("async without pipe", async () => {
