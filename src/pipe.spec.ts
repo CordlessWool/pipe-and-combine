@@ -59,7 +59,7 @@ describe("performance", () => {
   const div = (a: number) => (x: number) => x / a;
 
   test("async pipe", () => {
-    const as = (a: number) => (x: number) => x + a;
+    const as = (a: number) => async (x: number) => x + a;
     console.time("CreatedAsync");
     const pipeline = pipe(add(2), sub(3), add(1), as(2), mul(2), div(2));
     console.timeLog("CreatedAsync");
