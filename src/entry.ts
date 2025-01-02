@@ -1,5 +1,5 @@
-export { pipe, preparePipe } from "./pipe";
-export { combine, prepareCombine } from "./combine";
-export { gate, prepareGate } from "./gate";
-export * from "./helpers/index";
-export type * from "./types";
+export { pipe, preparePipe } from "./pipe.js";
+export { combine, prepareCombine } from "./combine.js";
+export { gate, prepareGate } from "./gate.js";
+export * from "./helpers/index.js";
+export type * from "./types.js";

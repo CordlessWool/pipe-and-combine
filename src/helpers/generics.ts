@@ -7,7 +7,7 @@ import {
   KeyAnyObject,
   MaybePromise,
   ObjectFromArrays,
-} from "../types";
+} from "../types.js";
 
 /**
  * Generic merge function

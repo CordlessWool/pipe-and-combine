@@ -1,5 +1,5 @@
 import { test, describe, expect } from "vitest";
-import { combine } from "./combine";
+import { combine } from "./combine.js";
 
 describe("combine", () => {
   test("combine with one param", () => {

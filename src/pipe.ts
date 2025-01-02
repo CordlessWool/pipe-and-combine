@@ -6,7 +6,7 @@ import type {
   HasAsyncFunction,
   GType,
   GQueue,
-} from "./types";
+} from "./types.js";
 
 /**
  *   AF: A Function

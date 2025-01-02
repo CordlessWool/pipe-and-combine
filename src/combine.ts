@@ -1,16 +1,17 @@
-import type { AnyFunction } from "./types";
+import type { AnyFunction } from "./types.js";
 
 type CombineMap<
   AF extends AnyFunction,
   TInput extends any[],
-  TOutput extends any,
-> =
-  AF extends AnyFunction<TInput, TOutput> ? AF : (...value: TInput) => TOutput;
+  TOutput extends any
+> = AF extends AnyFunction<TInput, TOutput>
+  ? AF
+  : (...value: TInput) => TOutput;
 
 export type CombineArray<
   T extends readonly AnyFunction[],
   TInput extends any[],
-  TOutput extends any,
+  TOutput extends any
 > = {
   [X in keyof T]: CombineMap<
     T[X],

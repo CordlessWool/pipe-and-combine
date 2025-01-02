@@ -1,4 +1,4 @@
-import { AnyFunction } from "../types";
+import { AnyFunction } from "../types.js";
 
 /**
  * Wrapps around a function and deserializes an array as arguments.

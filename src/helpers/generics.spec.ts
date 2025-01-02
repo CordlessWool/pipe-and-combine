@@ -1,5 +1,5 @@
 import { test, describe, assertType, expect } from "vitest";
-import { g, addDate, omit, pick } from "./generics";
+import { g, addDate, omit, pick } from "./generics.js";
 
 describe("generics helper functions", () => {
   test("addDate", () => {

@@ -1,5 +1,5 @@
-import { combine, type CombineArray } from "./combine";
-import type { AnyFunction } from "./types";
+import { combine, type CombineArray } from "./combine.js";
+import type { AnyFunction } from "./types.js";
 
 export class GateException<T extends any[]> extends Error {
   public readonly result: T;
@@ -12,7 +12,7 @@ export class GateException<T extends any[]> extends Error {
 
 export const prepareGate =
   <TInput extends [...any[]], VInput extends [...any[]] = TInput>(
-    modifier?: AnyFunction<TInput, VInput>,
+    modifier?: AnyFunction<TInput, VInput>
   ) =>
   <T extends readonly AnyFunction[]>(...fus: CombineArray<T, VInput, any>) => {
     const combined = combine<AnyFunction<VInput, any>[]>(...fus);
