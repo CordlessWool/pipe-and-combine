@@ -1,5 +1,11 @@
 # pipe-and-combine
 
+## 0.7.7
+
+### Patch Changes
+
+- 2e1d06d: add .js to all imports
+
 ## 0.7.6
 
 ### Patch Changes
