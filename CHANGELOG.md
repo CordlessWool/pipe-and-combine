@@ -1,5 +1,11 @@
 # pipe-and-combine
 
+## 0.7.6
+
+### Patch Changes
+
+- cc37e60: export helpers/index instead of helpers to get correct types
+
 ## 0.7.5
 
 ### Patch Changes
