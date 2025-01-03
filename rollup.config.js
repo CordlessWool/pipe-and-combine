@@ -1,5 +1,6 @@
 import typescript from "rollup-plugin-typescript2";
 import { dts } from "rollup-plugin-dts";
+import { nodeResolve } from "@rollup/plugin-node-resolve";
 
 export default [
   {
@@ -17,6 +18,7 @@ export default [
       },
     ],
     plugins: [
+      nodeResolve(), // Resolve node modules
       typescript({ tsconfig: "./tsconfig.json" }), // TypeScript plugin
     ],
     external: [], // Specify external dependencies here, if any
