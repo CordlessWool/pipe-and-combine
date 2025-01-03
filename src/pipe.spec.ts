@@ -1,6 +1,6 @@
 import { test, describe, expect } from "vitest";
-import { pipe } from "./pipe";
-import { apply } from "./helpers";
+import { pipe } from "./pipe.js";
+import { apply } from "./helpers/index.js";
 
 describe("pipe", () => {
   const inc = (by: number) => (x: number) => x + by;

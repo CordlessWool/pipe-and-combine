@@ -1,7 +1,7 @@
 import { test, describe, expectTypeOf } from "vitest";
-import { preparePipe } from "./pipe";
-import { apply } from "./helpers";
-import { gate } from "./gate";
+import { preparePipe } from "./pipe.js";
+import { apply } from "./helpers/index.js";
+import { gate } from "./gate.js";
 
 describe("type integration", () => {
   interface User {
