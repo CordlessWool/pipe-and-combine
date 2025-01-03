@@ -1,5 +1,11 @@
 # pipe-and-combine
 
+## 0.7.8
+
+### Patch Changes
+
+- 43a360a: add d.cts type for cjs exports
+
 ## 0.7.7
 
 ### Patch Changes
