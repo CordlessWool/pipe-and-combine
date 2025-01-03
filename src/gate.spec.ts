@@ -1,5 +1,5 @@
 import { test, describe, expect } from "vitest";
-import { gate, GateException } from "./gate";
+import { gate, GateException } from "./gate.js";
 
 describe("combine", () => {
   interface User {
@@ -21,7 +21,7 @@ describe("combine", () => {
     };
     const gateRunner = gate(
       isAuthorized("isAdmin", true),
-      isAuthorized("company", "Cotton-Coding"),
+      isAuthorized("company", "Cotton-Coding")
     );
     expect(gateRunner(user)).toEqual([user]);
   });
@@ -35,7 +35,7 @@ describe("combine", () => {
     };
     const gateRunner = gate(
       isAuthorized("isAdmin", true),
-      isAuthorized("company", "Cotton-Coding"),
+      isAuthorized("company", "Cotton-Coding")
     );
     expect(() => gateRunner(user)).toThrowError(GateException);
     try {

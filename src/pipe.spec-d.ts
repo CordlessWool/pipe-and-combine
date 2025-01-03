@@ -1,7 +1,7 @@
 import { test, describe, assertType, expectTypeOf } from "vitest";
-import { pipe, preparePipe } from "./pipe";
-import { g as gm } from "./helpers";
-import { addDate, exec, omit } from "./helpers/generics";
+import { pipe, preparePipe } from "./pipe.js";
+import { g as gm } from "./helpers/index.js";
+import { addDate, exec, omit } from "./helpers/generics.js";
 
 describe("pipe", () => {
   test("should return string", () => {

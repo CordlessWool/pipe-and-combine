@@ -1,5 +1,5 @@
 import { test, describe, expectTypeOf } from "vitest";
-import { gate, prepareGate } from "./gate";
+import { gate, prepareGate } from "./gate.js";
 
 describe("combine", () => {
   interface User {
@@ -21,7 +21,7 @@ describe("combine", () => {
     };
     const gateRunner = gate(
       isAuthorized("isAdmin", true),
-      isAuthorized("company", "Cotton-Coding"),
+      isAuthorized("company", "Cotton-Coding")
     );
     expectTypeOf(gateRunner).parameter(0).toEqualTypeOf<User>();
     expectTypeOf(gateRunner(user)).toEqualTypeOf<[User]>();
@@ -36,7 +36,7 @@ describe("combine", () => {
     };
     const preparedGate = prepareGate(({ company }: User) => [company]);
     const gateRunner = preparedGate(
-      (company: string) => company === "Cotton-Coding",
+      (company: string) => company === "Cotton-Coding"
     );
     expectTypeOf(gateRunner).parameter(0).toEqualTypeOf<User>();
     expectTypeOf(gateRunner(user)).toEqualTypeOf<[User]>();
