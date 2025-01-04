@@ -33,7 +33,7 @@ jobs:
           # This expects you to have a script called release which does a build for your packages and calls changeset publish
           skip-publish-pr: true
           version: true
-          publish: true
+          publish: pnpm run ci:release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
