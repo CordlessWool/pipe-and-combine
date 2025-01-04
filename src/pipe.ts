@@ -15,36 +15,30 @@ import type {
  *   BO: B Function Output
  */
 
-type PrevReturn<
+export type PrevReturn<
   F extends readonly AnyFunction[],
   X extends `${number}` | number,
   I extends any[]
-> = X extends "0"
+> = X extends "0" | 0
   ? I
   : F[Prev<X>] extends GType
-  ? GQueue<F[Prev<X>], PrevReturn<F, Prev<X>, I>>
-  : ReturnType<F[Prev<X>]>;
+  ? [Awaited<GQueue<F[Prev<X>], PrevReturn<F, Prev<X>, I>>>]
+  : [Awaited<ReturnType<F[Prev<X>]>>];
 
-type PipeReduce<
+export type PipeReduce<
   AI extends any[],
   BF extends AnyFunction,
   BO = unknown
 > = BF extends AnyFunction<AI, BO> ? BF : (...value: AI) => BO;
 
-type PipeArray<
+export type PipeArray<
   T extends readonly AnyFunction[],
   TInput extends any[] = Parameters<T[0]>,
-  TOutput = ReturnType<T[LastIndex<T>]>
+  TOutput = any
 > = {
-  [X in keyof T]: X extends "0" | 0
-    ? PipeReduce<
-        Awaited<TInput>,
-        T[X],
-        X extends `${LastIndex<T>}` ? TOutput : unknown
-      >
-    : X extends `${LastIndex<T>}` | LastIndex<T>
-    ? PipeReduce<[Awaited<PrevReturn<T, X, TInput>>], T[X], TOutput>
-    : PipeReduce<[Awaited<PrevReturn<T, X, TInput>>], T[X]>;
+  [X in keyof T]: X extends `${LastIndex<T>}` | LastIndex<T>
+    ? PipeReduce<PrevReturn<T, X, TInput>, T[X], TOutput>
+    : PipeReduce<PrevReturn<T, X, TInput>, T[X]>;
 };
 
 type PipeReturn<
@@ -72,8 +66,14 @@ type PipeDefineOutput<
  * @returns a pipe function with a preset input and output.
  */
 export const preparePipe =
-  <TInput extends any[], TOutput>() =>
-  <T extends readonly AnyFunction[]>(...fus: PipeArray<T, TInput, TOutput>) => {
+  <TInput extends any[] | "empty" = "empty", TOutput = unknown>() =>
+  <T extends readonly AnyFunction[]>(
+    ...fus: PipeArray<
+      T,
+      TInput extends "empty" ? Parameters<T[0]> : TInput,
+      TOutput
+    >
+  ) => {
     const [first, ...rest] = fus;
     const chain = rest.reduce(
       (chain, f) =>
@@ -87,8 +87,12 @@ export const preparePipe =
       first
     );
     return chain as (
-      ...input: TInput extends any ? Parameters<T[0]> : TInput
-    ) => PipeReturn<TOutput, T, TInput>;
+      ...input: TInput extends "empty" ? Parameters<T[0]> : TInput
+    ) => PipeReturn<
+      TOutput,
+      T,
+      TInput extends "empty" ? Parameters<T[0]> : TInput
+    >;
   };
 
 /**

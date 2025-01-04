@@ -28,11 +28,11 @@ export function g<const FI extends AnyObject, FO>(
   return fu.constructor.name === "AsyncFunction"
     ? ((async (data) => {
         const subset = await fu(data);
-        return { ...data, ...subset };
+        return { ...(data ?? {}), ...subset };
       }) as GMergeAsync<FI, FO>)
     : (((data) => {
         const subset = fu(data);
-        return { ...data, ...subset };
+        return { ...(data ?? {}), ...subset };
       }) as GMerge<FI, FO>);
 }
 
