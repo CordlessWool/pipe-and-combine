@@ -1,5 +1,11 @@
 # pipe-and-combine
 
+## 0.7.9
+
+### Patch Changes
+
+- a995c0f: improve types for g function. Allow to use g functions as first in pipe.
+
 ## 0.7.8
 
 ### Patch Changes
