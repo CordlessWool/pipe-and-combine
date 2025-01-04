@@ -1,15 +1,8 @@
 import { test, describe, assertType, expectTypeOf } from "vitest";
-import {
-  pipe,
-  PipeArray,
-  PipeReduce,
-  preparePipe,
-  PrevReturn,
-} from "./pipe.js";
+import { pipe, preparePipe } from "./pipe.js";
 import { g } from "./helpers/index.js";
 import { addDate, exec, omit } from "./helpers/generics.js";
 import { Dirent } from "node:fs";
-import { AnyObject, LastIndex, MergeObjects } from "./types.js";
 
 describe("pipe", () => {
   test("should return string", () => {
@@ -273,9 +266,9 @@ describe("preparePipe", () => {
       (i: number) => i + 1,
       (i: number) => i.toString()
     );
-    expectTypeOf(transformer).parameter(0).toEqualTypeOf<string>();
+    expectTypeOf(transformer).parameter(0).toEqualTypeOf<number>();
     expectTypeOf(transformer).returns.toEqualTypeOf<string>();
-    assertType<string>(transformer("2"));
+    assertType<string>(transformer(2));
   });
 
   test("preparePipe assert params are reference (Output)", () => {
@@ -299,8 +292,21 @@ describe("preparePipe", () => {
       (i: number) => i + 1,
       (i: number) => i.toString()
     );
-    expectTypeOf(transformer).parameter(0).toEqualTypeOf<string>();
+    expectTypeOf(transformer).parameter(0).toEqualTypeOf<number>();
     expectTypeOf(transformer).returns.toEqualTypeOf<string>();
-    assertType<string>(transformer("2"));
+    assertType<string>(transformer(2));
+  });
+
+  test("preparePipe assert params are reference (Input and Output) with Object", () => {
+    const pipe = preparePipe<[{ t: string }], number>();
+    const transformer = pipe(
+      // @ts-expect-error
+      (i: string): number => Number(i),
+      (i: number) => i + 1,
+      (i: number) => i.toString()
+    );
+    expectTypeOf(transformer).parameter(0).toEqualTypeOf<{ t: string }>();
+    expectTypeOf(transformer).returns.toEqualTypeOf<string>();
+    assertType<string>(transformer({ t: "2" }));
   });
 });

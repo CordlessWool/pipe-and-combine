@@ -66,11 +66,11 @@ type PipeDefineOutput<
  * @returns a pipe function with a preset input and output.
  */
 export const preparePipe =
-  <TInput extends any[], TOutput>() =>
+  <TInput extends any[] | "empty" = "empty", TOutput = unknown>() =>
   <T extends readonly AnyFunction[]>(
     ...fus: PipeArray<
       T,
-      TInput extends any ? Parameters<T[0]> : TInput,
+      TInput extends "empty" ? Parameters<T[0]> : TInput,
       TOutput
     >
   ) => {
@@ -87,8 +87,12 @@ export const preparePipe =
       first
     );
     return chain as (
-      ...input: TInput extends any ? Parameters<T[0]> : TInput
-    ) => PipeReturn<TOutput, T, TInput>;
+      ...input: TInput extends "empty" ? Parameters<T[0]> : TInput
+    ) => PipeReturn<
+      TOutput,
+      T,
+      TInput extends "empty" ? Parameters<T[0]> : TInput
+    >;
   };
 
 /**
