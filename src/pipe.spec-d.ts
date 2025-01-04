@@ -1,7 +1,15 @@
 import { test, describe, assertType, expectTypeOf } from "vitest";
-import { pipe, preparePipe } from "./pipe.js";
-import { g as gm } from "./helpers/index.js";
+import {
+  pipe,
+  PipeArray,
+  PipeReduce,
+  preparePipe,
+  PrevReturn,
+} from "./pipe.js";
+import { g } from "./helpers/index.js";
 import { addDate, exec, omit } from "./helpers/generics.js";
+import { Dirent } from "node:fs";
+import { AnyObject, LastIndex, MergeObjects } from "./types.js";
 
 describe("pipe", () => {
   test("should return string", () => {
@@ -32,43 +40,101 @@ describe("pipe", () => {
   test("pipe with generics", () => {
     const init = () => () => ({ test: "test" });
     const addStartupTime = (time: Date = new Date()) =>
-      gm(() => ({
+      g(() => ({
         startup: time,
       }));
     const timeDiff = () =>
-      gm((data: { startup: Date; current: Date }) => {
+      g((data: { startup: Date; current: Date }) => {
         return {
           ...data,
           diff: new Date(data.current.getTime() - data.startup.getTime()),
         };
       });
 
-    const addHello = () => gm(() => ({ hello: "test" }));
+    const addHello = () => g(() => ({ hello: "test" }));
 
     const currentToString = () =>
-      gm((data: { current: Date }) => {
+      g((data: { current: Date }) => {
         return {
           current: data.current.toString(),
         };
       });
 
     const pipeline = pipe(
-      init(),
       addStartupTime(),
       addDate("current"),
       timeDiff(),
       currentToString(),
       addHello(),
-      addDate("current"),
+      addDate("done"),
       omit("hello")
     );
 
     expectTypeOf(pipeline).returns.toEqualTypeOf<{
-      current: Date;
+      current: string;
+      done: Date;
       startup: Date;
       diff: Date;
-      test: string;
     }>();
+  });
+
+  test("pipe with generic and object input", () => {
+    const t = () =>
+      g((dir: { base: string; $type: 0 }) => {
+        return {
+          readAt: new Date(),
+          content: [] as Dirent[],
+        } satisfies { readAt: Date; content: Dirent[] };
+      });
+
+    type t2 = ReturnType<typeof t>;
+    const only =
+      (type: 0 | 1) => (dir: { content: Dirent[]; base: string }) => {
+        if (type === 0)
+          return dir.content
+            .filter((item) => item.isDirectory())
+            .map((item) => ({
+              $type: 0 as const,
+              base: dir.base,
+              path: item.path,
+            }));
+        else {
+          return dir.content
+            .filter((item) => item.isFile())
+            .map((item) => ({
+              $type: 1 as const,
+              base: dir.base,
+              path: item.path,
+            }));
+        }
+      };
+
+    // TODO: Seperate types tests
+    // const onlyDirs = only(0);
+    // const tg = t();
+    // type Input = Parameters<typeof tg>;
+    // type TFus = [typeof tg, typeof onlyDirs];
+    // type Return = PipeReduce<
+    //   PrevReturn<TFus, 1, any>,
+    //   typeof onlyDirs,
+    //   unknown
+    // >;
+    // type Arr = PipeArray<TFus, any[]>;
+    // type o = ReturnType<typeof onlyDirs>;
+
+    const getAllFiles = pipe(t(), only(0));
+    expectTypeOf(getAllFiles).returns.toEqualTypeOf<
+      | {
+          $type: 0;
+          base: string;
+          path: string;
+        }[]
+      | {
+          $type: 1;
+          base: string;
+          path: string;
+        }[]
+    >();
   });
 });
 
@@ -89,13 +155,13 @@ describe("asyncPipe", () => {
   test("async pipe with generics", () => {
     const init = () => () => ({ test: "test" });
     const addStartupTime = (time: Date = new Date()) =>
-      gm(async () => ({
+      g(async () => ({
         startup: time,
       }));
     const pause = (ms: number) =>
-      gm(() => new Promise<{}>((r) => setTimeout(() => r({}), ms)));
+      g(() => new Promise<{}>((r) => setTimeout(() => r({}), ms)));
     const timeDiff = () =>
-      gm(async (data: { startup: Date; current: Date }) => {
+      g(async (data: { startup: Date; current: Date }) => {
         return {
           ...data,
           diff: new Date(data.current.getTime() - data.startup.getTime()),
@@ -103,7 +169,7 @@ describe("asyncPipe", () => {
       });
 
     const currentToString = () =>
-      gm((data: { current: Date }) => {
+      g((data: { current: Date }) => {
         return {
           current: data.current.toString(),
         };
@@ -152,7 +218,7 @@ describe("asyncPipe", () => {
         },
       });
     const createProject = () =>
-      gm(
+      g(
         async (data: {
           project: NewProject;
         }): Promise<{ project: Project }> => {
@@ -161,7 +227,7 @@ describe("asyncPipe", () => {
       );
 
     const test = () =>
-      gm((data: { project: Project; timestamp: Date }) => {
+      g((data: { project: Project; timestamp: Date }) => {
         return {};
       });
 

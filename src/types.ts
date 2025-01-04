@@ -47,13 +47,22 @@ export type ArrayMaybePromise<T> = {
   [x in keyof T]: MaybePromise<T[x]>;
 };
 
+type ExcludeGeneric<T> = string extends T // do we actually have a string index signature?
+  ? never
+  : symbol extends T // is it a symbol index signature?
+  ? never
+  : number extends T // is it a number index signature?
+  ? never
+  : T;
+
 export type MergeObjects<A, B> = {
-  [X in keyof A | keyof B]: X extends keyof B
+  [X in ExcludeGeneric<keyof A> | keyof B]: X extends keyof B
     ? B[X]
     : X extends keyof A
     ? A[X]
     : never;
 };
+
 
 export type PropablyPromise<R, B> = B extends true ? Promise<R> : R;
 
@@ -112,10 +121,10 @@ export type GType =
   | GOmit<any, any>
   | GPick<any, any>;
 
-export type GQueue<F, I> = F extends GMerge<any, infer B>
-  ? MergeObjects<I, Awaited<B>>
+export type GQueue<F, I extends any[]> = F extends GMerge<any, infer B>
+  ? MergeObjects<I[0], Awaited<B>>
   : F extends GOmit<any, infer K>
-  ? Omit<I, K>
+  ? Omit<I[0], K>
   : F extends GPick<any, infer K>
-  ? Pick<I, K extends keyof I ? K : never>
+  ? Pick<I[0], K extends keyof I[0] ? K : never>
   : never;
