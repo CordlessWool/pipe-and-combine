@@ -1,5 +1,13 @@
 # pipe-and-combine
 
+## 0.7.10
+
+### Patch Changes
+
+- d63b206: - Remove GMergeAsync and inlcude it in GMerge
+  - Improve HasAnyAsync function to handle GMerge with Promise
+  - g do not need a retrun type of the given function
+
 ## 0.7.9
 
 ### Patch Changes
