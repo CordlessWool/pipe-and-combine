@@ -21,8 +21,19 @@ describe("generics helper functions", () => {
 
   test("g", () => {
     const merge = g((data: { test: string }) => ({ test2: data.test }));
-    // @ts-expect-error
     const result = merge({ test: "t", text: "text" });
     expect(result).toEqual({ test: "t", test2: "t", text: "text" });
+  });
+
+  test("g without input", () => {
+    const merge = g(() => ({ test2: "t2" }));
+    const result = merge({ test: "t", text: "text" });
+    expect(result).toEqual({ test: "t", test2: "t2", text: "text" });
+  });
+
+  test("g without return", () => {
+    const merge = g((data: { test: string }) => {});
+    const result = merge({ test: "t", text: "text" });
+    expect(result).toEqual({ test: "t", text: "text" });
   });
 });

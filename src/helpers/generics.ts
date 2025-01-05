@@ -1,11 +1,9 @@
 import {
   AnyObject,
   GMerge,
-  GMergeAsync,
   GOmit,
   GPick,
   KeyAnyObject,
-  MaybePromise,
   ObjectFromArrays,
 } from "../types.js";
 
@@ -16,23 +14,15 @@ import {
  * @param fu - The function to merge
  * @returns
  */
-export function g<const FI extends AnyObject, FO>(
-  fu: (args: FI) => FO
-): GMerge<FI, FO>;
-export function g<const FI extends AnyObject, FO>(
-  fu: (args: FI) => Promise<FO>
-): GMergeAsync<FI, FO>;
-export function g<const FI extends AnyObject, FO>(
-  fu: (args: FI) => MaybePromise<FO>
-) {
+export function g<const FI extends AnyObject, FO>(fu: (args: FI) => FO) {
   return fu.constructor.name === "AsyncFunction"
     ? ((async (data) => {
         const subset = await fu(data);
-        return { ...(data ?? {}), ...subset };
-      }) as GMergeAsync<FI, FO>)
+        return { ...(data ?? {}), ...(subset ?? {}) };
+      }) as GMerge<FI, FO>)
     : (((data) => {
         const subset = fu(data);
-        return { ...(data ?? {}), ...subset };
+        return { ...(data ?? {}), ...(subset ?? {}) };
       }) as GMerge<FI, FO>);
 }
 
@@ -106,10 +96,8 @@ export const exec = <
     ? g(async (data: GI) => {
         const dataArray = mapPick<GI, TPick>(data, pick) as TArgs;
         await fu(...dataArray);
-        return {};
       })
     : g((data: GI) => {
         const dataArray = mapPick<GI, TPick>(data, pick) as TArgs;
         fu(...dataArray);
-        return {};
       });
