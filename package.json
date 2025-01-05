@@ -11,7 +11,7 @@
     "test": "vitest",
     "tt": "vitest --typecheck",
     "ci:test": "pnpm run test && pnpm run tt",
-    "publish": "changeset publish"
+    "ci:release": "pnpm publish --access public"
   },
   "keywords": [
     "pipe",
