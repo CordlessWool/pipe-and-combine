@@ -55,18 +55,23 @@ type ExcludeGeneric<T> = string extends T // do we actually have a string index 
   ? never
   : T;
 
-export type MergeObjects<A, B> = {
-  [X in ExcludeGeneric<keyof A> | keyof B]: X extends keyof B
-    ? B[X]
-    : X extends keyof A
-    ? A[X]
-    : never;
-};
-
+export type MergeObjects<A, B> = B extends void
+  ? A
+  : {
+      [X in ExcludeGeneric<keyof A> | keyof B]: X extends keyof B
+        ? B[X]
+        : X extends keyof A
+        ? A[X]
+        : never;
+    };
 
 export type PropablyPromise<R, B> = B extends true ? Promise<R> : R;
 
-type IsAsyncFunction<T> = T extends (...args: any[]) => Promise<any>
+type IsAsyncFunction<T> = T extends GMerge<any, infer GOut>
+  ? GOut extends Promise<any>
+    ? true
+    : false
+  : T extends (...args: any[]) => Promise<any>
   ? true
   : false;
 
@@ -100,11 +105,9 @@ export type ObjectFromArrays<
 /**
  * Generics
  */
-export type GMerge<I, O> = ((data: I) => I & O) & {
-  __brand: "GMerge";
-};
-
-export type GMergeAsync<I, O> = ((data: I) => Promise<I & O>) & {
+export type GMerge<I, O> = (O extends Promise<any>
+  ? <TInput extends I = I>(data: TInput) => Promise<TInput & Awaited<O>>
+  : <TInput extends I = I>(data: TInput) => TInput & O) & {
   __brand: "GMerge";
 };
 
@@ -115,11 +118,7 @@ export type GPick<I, K extends keyof I> = ((data: I) => Pick<I, K>) & {
   __brand: "GPick";
 };
 
-export type GType =
-  | GMerge<any, any>
-  | GMergeAsync<any, any>
-  | GOmit<any, any>
-  | GPick<any, any>;
+export type GType = GMerge<any, any> | GOmit<any, any> | GPick<any, any>;
 
 export type GQueue<F, I extends any[]> = F extends GMerge<any, infer B>
   ? MergeObjects<I[0], Awaited<B>>

@@ -3,6 +3,7 @@ import { pipe, preparePipe } from "./pipe.js";
 import { g } from "./helpers/index.js";
 import { addDate, exec, omit } from "./helpers/generics.js";
 import { Dirent } from "node:fs";
+import { HasAsyncFunction } from "./types.js";
 
 describe("pipe", () => {
   test("should return string", () => {
@@ -31,7 +32,6 @@ describe("pipe", () => {
   });
 
   test("pipe with generics", () => {
-    const init = () => () => ({ test: "test" });
     const addStartupTime = (time: Date = new Date()) =>
       g(() => ({
         startup: time,
@@ -62,6 +62,8 @@ describe("pipe", () => {
       addDate("done"),
       omit("hello")
     );
+
+    const startup = addStartupTime();
 
     expectTypeOf(pipeline).returns.toEqualTypeOf<{
       current: string;
