@@ -14,16 +14,20 @@ import {
  * @param fu - The function to merge
  * @returns
  */
-export function g<const FI extends AnyObject, FO>(fu: (args: FI) => FO) {
-  return fu.constructor.name === "AsyncFunction"
-    ? ((async (data) => {
-        const subset = await fu(data);
-        return { ...(data ?? {}), ...(subset ?? {}) };
-      }) as GMerge<FI, FO>)
-    : (((data) => {
-        const subset = fu(data);
-        return { ...(data ?? {}), ...(subset ?? {}) };
-      }) as GMerge<FI, FO>);
+export function g<const FI extends AnyObject | undefined, FO>(
+  fu: (args: FI) => FO
+): GMerge<FI, FO> {
+  return (
+    fu.constructor.name === "AsyncFunction"
+      ? async <I extends FI>(data: I) => {
+          const subset = await fu(data);
+          return { ...(data ?? {}), ...(subset ?? {}) };
+        }
+      : <I extends FI>(data: I) => {
+          const subset = fu(data);
+          return { ...(data ?? {}), ...(subset ?? {}) };
+        }
+  ) as GMerge<FI, FO>;
 }
 
 /**

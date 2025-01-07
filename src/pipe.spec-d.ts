@@ -3,7 +3,6 @@ import { pipe, preparePipe } from "./pipe.js";
 import { g } from "./helpers/index.js";
 import { addDate, exec, omit } from "./helpers/generics.js";
 import { Dirent } from "node:fs";
-import { HasAsyncFunction } from "./types.js";
 
 describe("pipe", () => {
   test("should return string", () => {
@@ -81,8 +80,6 @@ describe("pipe", () => {
           content: [] as Dirent[],
         } satisfies { readAt: Date; content: Dirent[] };
       });
-
-    type t2 = ReturnType<typeof t>;
     const only =
       (type: 0 | 1) => (dir: { content: Dirent[]; base: string }) => {
         if (type === 0)
@@ -154,11 +151,10 @@ describe("asyncPipe", () => {
         startup: time,
       }));
     const pause = (ms: number) =>
-      g(() => new Promise<{}>((r) => setTimeout(() => r({}), ms)));
+      g(() => new Promise<void>((r) => setTimeout(() => r(), ms)));
     const timeDiff = () =>
       g(async (data: { startup: Date; current: Date }) => {
         return {
-          ...data,
           diff: new Date(data.current.getTime() - data.startup.getTime()),
         };
       });
@@ -169,6 +165,17 @@ describe("asyncPipe", () => {
           current: data.current.toString(),
         };
       });
+
+    // type TFus = [
+    //   ReturnType<typeof addStartupTime>,
+    //   ReturnType<typeof addDate>,
+    //   ReturnType<typeof timeDiff>
+    // ];
+    // type Return = PipeReduce<PrevReturn<TFus, 1, any>, typeof addDate, unknown>;
+    // type Arr = PipeArray<TFus, any[]>;
+    // type o1 = ReturnType<typeof addStartupTime>;
+    // type o2 = ReturnType<o1>;
+    // type i = Parameters<o1>;
 
     const pipeline = pipe(
       init(),
