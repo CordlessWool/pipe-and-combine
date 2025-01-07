@@ -39,7 +39,9 @@ describe("generics helper functions", () => {
       test2: data.test,
     }));
     const result = merge({ test: "text" });
-    expect(result).toEqual({ test: "text", test2: "default" });
+    expect(result).toEqual({ test: "text", test2: "text" });
+    const result2 = merge();
+    expect(result2).toEqual({ test2: "default" });
   });
 
   test("g without return", () => {
