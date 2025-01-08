@@ -1,5 +1,12 @@
 # pipe-and-combine
 
+## 0.7.11
+
+### Patch Changes
+
+- 5d335ed: allow to call G function without value
+  allow predefiened values in g functions
+
 ## 0.7.10
 
 ### Patch Changes
