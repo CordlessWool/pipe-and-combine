@@ -58,16 +58,16 @@ type ExcludeGeneric<T> = string extends T // do we actually have a string index 
 export type MergeObjects<A, B> = B extends void
   ? A
   : {
-      [X in ExcludeGeneric<keyof A> | keyof B]: X extends keyof B
-        ? B[X]
-        : X extends keyof A
-        ? A[X]
-        : never;
+      [X in
+        | ExcludeGeneric<keyof Exclude<A, undefined>>
+        | keyof B]: X extends keyof B ? B[X] : X extends keyof A ? A[X] : never;
     };
 
 export type PropablyPromise<R, B> = B extends true ? Promise<R> : R;
 
-type IsAsyncFunction<T> = T extends GMerge<any, infer GOut>
+type IncludesUndefined<T> = Extract<T, undefined> extends never ? false : true;
+
+type IsAsyncFunction<T> = T extends GMerge<AnyObject, infer GOut>
   ? GOut extends Promise<any>
     ? true
     : false
@@ -105,9 +105,19 @@ export type ObjectFromArrays<
 /**
  * Generics
  */
-export type GMerge<I, O> = (O extends Promise<any>
-  ? <TInput extends I = I>(data: TInput) => Promise<TInput & Awaited<O>>
-  : <TInput extends I = I>(data: TInput) => TInput & O) & {
+type GMergeFunction<I, O> = IncludesUndefined<I> extends true
+  ? <TInput extends I = I>(
+      data?: TInput
+    ) => TInput extends undefined ? O : TInput & O
+  : <TInput extends I = I>(data: TInput) => TInput & O;
+type GMergeAsyncFunction<I, O> = IncludesUndefined<I> extends true
+  ? <TInput extends I = I>(
+      data?: TInput
+    ) => Promise<TInput extends undefined ? O : TInput & O>
+  : <TInput extends I = I>(data: TInput) => Promise<TInput & O>;
+export type GMerge<I, O> = (O extends Promise<infer O>
+  ? GMergeAsyncFunction<I, O>
+  : GMergeFunction<I, O>) & {
   __brand: "GMerge";
 };
 
