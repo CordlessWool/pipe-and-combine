@@ -86,13 +86,8 @@ export const preparePipe =
           : (...args) => f(chain(...args)),
       first
     );
-    return chain as (
-      ...input: TInput extends "empty" ? Parameters<T[0]> : TInput
-    ) => PipeReturn<
-      TOutput,
-      T,
-      TInput extends "empty" ? Parameters<T[0]> : TInput
-    >;
+    type FI = TInput extends "empty" ? Parameters<T[0]> : TInput;
+    return chain as <I extends FI>(...input: I) => PipeReturn<TOutput, T, I>;
   };
 
 /**

@@ -3,6 +3,7 @@ import { pipe, preparePipe } from "./pipe.js";
 import { g } from "./helpers/index.js";
 import { addDate, exec, omit } from "./helpers/generics.js";
 import { Dirent } from "node:fs";
+import { AnyObject } from "./types.js";
 
 describe("pipe", () => {
   test("should return string", () => {
@@ -194,6 +195,46 @@ describe("asyncPipe", () => {
         diff: Date;
       }>
     >();
+  });
+
+  test("generic", () => {
+    enum FTYPES {
+      FILE,
+      DIRECTORY,
+      LISTITEM,
+    }
+    interface EntityBase {
+      $type: FTYPES;
+      path: string;
+    }
+
+    interface File extends EntityBase {
+      $type: FTYPES.FILE;
+      readAt?: Date;
+      content?: Buffer | string;
+    }
+
+    interface Directory extends EntityBase {
+      $type: FTYPES.DIRECTORY;
+    }
+
+    const t = <T extends File | Directory>(entity: T) => {
+      // do something
+      return entity;
+    };
+
+    const create = pipe(
+      //listFu.convert(),
+      g((entity: File | Directory) => {
+        // do something
+        //return entity;
+        return entity;
+      })
+    );
+
+    expectTypeOf(
+      create({ $type: FTYPES.DIRECTORY, path: "" })
+    ).toEqualTypeOf<Directory>();
   });
 
   test("generic, async and complex types", () => {
