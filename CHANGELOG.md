@@ -1,5 +1,11 @@
 # pipe-and-combine
 
+## 0.8.0-next.2
+
+### Patch Changes
+
+- a7f5755: export run function
+
 ## 0.8.0-next.1
 
 ### Minor Changes
