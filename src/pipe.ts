@@ -57,6 +57,8 @@ type PipeDefineOutput<
     : Awaited<ReturnType<PipeArray<F>[LastIndex<F>]>>
   : DefinedOutput;
 
+type EmptyParams = { __brand: "EmptyParams" };
+
 /**
  * This function prepares a pipe function with a preset input and output.
  * The first function has to be a function that takes the input
@@ -66,11 +68,11 @@ type PipeDefineOutput<
  * @returns a pipe function with a preset input and output.
  */
 export const preparePipe =
-  <TInput extends any[] | "empty" = "empty", TOutput = unknown>() =>
+  <TInput extends any[] | EmptyParams = EmptyParams, TOutput = unknown>() =>
   <T extends readonly AnyFunction[]>(
     ...fus: PipeArray<
       T,
-      TInput extends "empty" ? Parameters<T[0]> : TInput,
+      TInput extends EmptyParams ? Parameters<T[0]> : TInput,
       TOutput
     >
   ) => {
@@ -86,8 +88,10 @@ export const preparePipe =
           : (...args) => f(chain(...args)),
       first
     );
-    type FI = TInput extends "empty" ? Parameters<T[0]> : TInput;
-    return chain as <I extends FI>(...input: I) => PipeReturn<TOutput, T, I>;
+    type FI = TInput extends EmptyParams ? Parameters<T[0]> : TInput;
+    return chain as T[0] extends GType
+      ? <I extends FI>(...input: I) => PipeReturn<TOutput, T, I>
+      : (...input: FI) => PipeReturn<TOutput, T, FI>;
   };
 
 /**
@@ -97,3 +101,6 @@ export const preparePipe =
  * Async functions are supported and will be awaited before passing the result to the next function.
  */
 export const pipe = preparePipe();
+export const run = <T extends readonly AnyFunction[]>(
+  ...fus: PipeArray<T, [], unknown>
+) => preparePipe<[], unknown>()<T>(...fus)();
