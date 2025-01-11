@@ -1,5 +1,11 @@
 # pipe-and-combine
 
+## 0.8.0-next.1
+
+### Minor Changes
+
+- c6d5ca3: Add run function and return generic chain only if first function is of type gFunction
+
 ## 0.8.0-next.0
 
 ### Minor Changes
