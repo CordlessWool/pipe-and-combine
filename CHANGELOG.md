@@ -1,5 +1,11 @@
 # pipe-and-combine
 
+## 0.8.0-next.0
+
+### Minor Changes
+
+- e8ed4e3: make pipe itself generic
+
 ## 0.7.11
 
 ### Patch Changes
