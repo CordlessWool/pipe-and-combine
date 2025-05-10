@@ -23,7 +23,7 @@ const result = pipeline(3); // result -> 7
 The main function this library provides is `pipe` and `combine`, but there are some helper functions to make it easier to use.
 They currently not all documentend here, but will follow soon.
 
-### Pipe
+## Pipe
 
 The usual `pipe` function will simply chain your functions together.
 It automatically detects if the functions are async or not and handles the return value accordingly.
@@ -55,7 +55,7 @@ const pipeline = pipe(double, increment, square, increment, toStr);
 await expect(pipeline(2)).resolves.toBe("26");
 ```
 
-#### Pre prepare the pipe
+### Pre prepare the pipe
 
 While `pipe` just takes the Input and Output of the functions,
 you can use `preparePipe` to prepare the pipe with the input and output value.
@@ -71,11 +71,11 @@ const pipe = preparePipe();
 const pipe = preparePipe<any, string>();
 ```
 
-#### Run
+### Run _(since 0.8)_
 
 `run` is a directly executing pipe. Instead of `pipe(...fus)()`, you could write `run(...fus)`
 
-### Combine
+## Combine
 
 > async is currently not implemented but will follow soon
 
@@ -92,9 +92,9 @@ const c = combine(add, multiply, divide, other, str);
 expect(c(1, 2)).toEqual([3, 2, 0.5, "-1", "1"]);
 ```
 
-### Helper functions
+## Helper functions
 
-#### apply
+### apply
 
 `apply` will take a function and apply an array returned by an other function as arguments.
 
@@ -105,11 +105,11 @@ const pipeline = pipe(init, apply(repeat));
 expect(pipeline()).toBe("texttexttexttexttext");
 ```
 
-#### map
+### map
 
 `map` could iterate over an array and call a function for each element, like `Array.prototype.map`.
 
-#### addDate (generic) (experimental)
+### addDate (generic) (experimental)
 
 This function adds a date to an object and returns the object with the date.
 It has a required parameter `key` to define the name of key where the date should be stored.
@@ -119,7 +119,7 @@ pipe(init(), addDate("createdAt"));
 // addDate will add a filed createdAt to the object given by init
 ```
 
-#### omit
+### omit
 
 Removes one or more keys from an object.
 
@@ -127,7 +127,7 @@ Removes one or more keys from an object.
 pipe(omit("text", "createdAt"));
 ```
 
-#### pick
+### pick
 
 Picks one or more keys from an object.
 

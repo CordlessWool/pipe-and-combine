@@ -67,7 +67,7 @@ export type PropablyPromise<R, B> = B extends true ? Promise<R> : R;
 
 type IncludesUndefined<T> = Extract<T, undefined> extends never ? false : true;
 
-type IsAsyncFunction<T> = T extends GMerge<AnyObject, infer GOut>
+export type IsAsyncFunction<T> = T extends GMerge<AnyObject, infer GOut>
   ? GOut extends Promise<any>
     ? true
     : false
