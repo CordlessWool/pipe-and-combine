@@ -71,6 +71,10 @@ const pipe = preparePipe();
 const pipe = preparePipe<any, string>();
 ```
 
+#### Run
+
+`run` is a directly executing pipe. Instead of `pipe(...fus)()`, you could write `run(...fus)`
+
 ### Combine
 
 > async is currently not implemented but will follow soon
