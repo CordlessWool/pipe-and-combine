@@ -1,5 +1,5 @@
 import { isAsync } from "./helpers/async.js";
-import type { AnyFunction } from "./types.js";
+import type { AnyFunction, HasAsyncFunction } from "./types.js";
 
 type CombineMap<
   AF extends AnyFunction,
@@ -32,10 +32,11 @@ export const prepareCombine =
   <TInput extends any[], TOutput = any>() =>
   <T extends readonly AnyFunction[]>(
     ...fus: CombineArray<T, TInput, TOutput>
-  ) =>
-    fus.some((fu) => isAsync(fu))
+  ) => {
+    type In = TInput extends any ? Parameters<T[0]> : TInput;
+    type Out = TOutput extends any ? CombineReturn<T> : TOutput[];
+    const func = fus.some((fu) => isAsync(fu))
       ? async (...input: TInput extends any ? Parameters<T[0]> : TInput) => {
-          type ReturnArray = TOutput extends any ? CombineReturn<T> : TOutput[];
           const result = [];
           for (const fu of fus) {
             if (isAsync(fu)) {
@@ -44,12 +45,16 @@ export const prepareCombine =
               result.push(fu(...input));
             }
           }
-          return result as ReturnArray;
+          return result;
         }
       : (...input: TInput extends any ? Parameters<T[0]> : TInput) =>
           fus.map((fu) => fu(...input)) as TOutput extends any
             ? CombineReturn<T>
             : TOutput[];
+    return func as HasAsyncFunction<T> extends true
+      ? (...input: In) => Promise<Out>
+      : (...input: In) => Out;
+  };
 
 /**
  * Combine multiple functions into one function.
