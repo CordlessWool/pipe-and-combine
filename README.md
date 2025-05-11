@@ -77,14 +77,12 @@ const pipe = preparePipe<any, string>();
 
 ### Combine
 
-> async is currently not implemented but will follow soon
-
-The `combine' function calls all functions with the same input and returns an array of results.
+The `combine` calls functions in the order they are passed and wait for async ones. All function get called with the same arguments.
 
 ```ts
 const add = (a: number, b: number) => a + b;
 const multiply = (a: number, b: number) => a * b;
-const divide = (a: number, b: number) => a / b;
+const divide = async (a: number, b: number) => a / b;
 const other = (a: number, b: number) => (a - b).toString();
 const str = (a: number) => a.toString();
 
