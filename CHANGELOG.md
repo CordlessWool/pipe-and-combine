@@ -1,5 +1,11 @@
 # pipe-and-combine
 
+## 0.8.0-next.3
+
+### Minor Changes
+
+- b1e7256: add async compatibility to combine
+
 ## 0.8.0-next.2
 
 ### Patch Changes
