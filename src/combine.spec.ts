@@ -22,4 +22,36 @@ describe("combine", () => {
     const c = combine(add, multiply, divide, other, str);
     expect(c(1, 2)).toEqual([3, 2, 0.5, "-1", "1"]);
   });
+
+  test("combine with async functions", async () => {
+    const asyncDouble = async (x: number) => x * 2;
+    const asyncIncrement = async (x: number) => {
+      const { promise, resolve } = Promise.withResolvers();
+      setTimeout(() => resolve(x + 1), 20);
+      return promise;
+    };
+    const asyncSquare = async (x: number) => x * x;
+    const asyncToStr = async (x: number) => x.toString();
+
+    const c = combine(asyncDouble, asyncIncrement, asyncSquare, asyncToStr);
+    expect(await c(3)).toEqual([6, 4, 9, "3"]);
+  });
+
+  test("combine with async and non-async functions", async () => {
+    const asyncDouble = (x: number) => x * 2;
+    const asyncIncrement = async (x: number) => {
+      const { promise, resolve } = Promise.withResolvers();
+      setTimeout(() => resolve(x + 1), 20);
+      return promise;
+    };
+    const asyncSquare = (x: number) => x * x;
+    const asyncToStr = async (x: number) => {
+      const { promise, resolve } = Promise.withResolvers();
+      setTimeout(() => resolve(x.toString()), 20);
+      return promise;
+    };
+
+    const c = combine(asyncDouble, asyncIncrement, asyncSquare, asyncToStr);
+    expect(await c(3)).toEqual([6, 4, 9, "3"]);
+  });
 });
