@@ -1,5 +1,17 @@
 # pipe-and-combine
 
+## 0.8.0
+
+### Minor Changes
+
+- c6d5ca3: Add run function and return generic chain only if first function is of type gFunction
+- e8ed4e3: make pipe itself generic
+- b1e7256: add async compatibility to combine
+
+### Patch Changes
+
+- a7f5755: export run function
+
 ## 0.8.0-next.2
 
 ### Patch Changes
