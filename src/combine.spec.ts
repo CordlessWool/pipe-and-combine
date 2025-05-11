@@ -26,9 +26,9 @@ describe("combine", () => {
   test("combine with async functions", async () => {
     const asyncDouble = async (x: number) => x * 2;
     const asyncIncrement = async (x: number) => {
-      const { promise, resolve } = Promise.withResolvers();
-      setTimeout(() => resolve(x + 1), 20);
-      return promise;
+      return new Promise((resolve) => {
+        setTimeout(() => resolve(x + 1), 20);
+      });
     };
     const asyncSquare = async (x: number) => x * x;
     const asyncToStr = async (x: number) => x.toString();
@@ -40,15 +40,13 @@ describe("combine", () => {
   test("combine with async and non-async functions", async () => {
     const asyncDouble = (x: number) => x * 2;
     const asyncIncrement = async (x: number) => {
-      const { promise, resolve } = Promise.withResolvers();
-      setTimeout(() => resolve(x + 1), 20);
-      return promise;
+      return new Promise((resolve) => setTimeout(() => resolve(x + 1), 20));
     };
     const asyncSquare = (x: number) => x * x;
     const asyncToStr = async (x: number) => {
-      const { promise, resolve } = Promise.withResolvers();
-      setTimeout(() => resolve(x.toString()), 20);
-      return promise;
+      return new Promise((resolve) => {
+        setTimeout(() => resolve(x.toString()), 20);
+      });
     };
 
     const c = combine(asyncDouble, asyncIncrement, asyncSquare, asyncToStr);
