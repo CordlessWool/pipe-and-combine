@@ -1,5 +1,11 @@
 # pipe-and-combine
 
+## 0.8.1
+
+### Patch Changes
+
+- b968180: TInput of prepare is now only one value and not a array
+
 ## 0.8.0
 
 ### Minor Changes
