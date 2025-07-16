@@ -14,7 +14,7 @@ import {
  * @param fu - The function to merge
  * @returns
  */
-export function g<const FI extends AnyObject | undefined, FO>(
+export function enhance<const FI extends AnyObject | undefined, FO>(
   fu: (args: FI) => FO
 ): GMerge<FI, FO> {
   return (
@@ -37,7 +37,7 @@ export function g<const FI extends AnyObject | undefined, FO>(
  * @returns
  */
 export const addDate = <FI extends AnyObject, T extends string>(tag: T) =>
-  g<FI, { [x in T]: Date }>(
+  enhance<FI, { [x in T]: Date }>(
     () =>
       ({
         [tag]: new Date(),
@@ -97,11 +97,11 @@ export const exec = <
   pick: TPick
 ) =>
   fu.constructor.name === "AsyncFunction"
-    ? g(async (data: GI) => {
+    ? enhance(async (data: GI) => {
         const dataArray = mapPick<GI, TPick>(data, pick) as TArgs;
         await fu(...dataArray);
       })
-    : g((data: GI) => {
+    : enhance((data: GI) => {
         const dataArray = mapPick<GI, TPick>(data, pick) as TArgs;
         fu(...dataArray);
       });
