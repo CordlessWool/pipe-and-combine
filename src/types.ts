@@ -5,6 +5,8 @@ export type KeyAnyObject<T extends readonly (string | number | symbol)[]> = {
   [X in keyof T as T[X] extends string | number | symbol ? T[X] : never]: any;
 };
 
+export type EmptyParams = { __brand: "EmptyParams" };
+
 export type Decrement<N extends number> = N extends 0
   ? never // If the number is 0, there's nothing to decrement
   : BuildArray<N> extends [...infer Rest, infer _]

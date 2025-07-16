@@ -6,6 +6,7 @@ import type {
   HasAsyncFunction,
   GType,
   GQueue,
+  EmptyParams,
 } from "./types.js";
 
 /**
@@ -56,8 +57,6 @@ type PipeDefineOutput<
     ? GQueue<F[LastIndex<F>], PrevReturn<F, LastIndex<F>, I>>
     : Awaited<ReturnType<PipeArray<F>[LastIndex<F>]>>
   : DefinedOutput;
-
-type EmptyParams = { __brand: "EmptyParams" };
 
 /**
  * This function prepares a pipe function with a preset input and output.
