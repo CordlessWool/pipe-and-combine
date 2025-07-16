@@ -1,6 +1,6 @@
 import { test, describe, assertType, expectTypeOf } from "vitest";
 import { pipe, preparePipe } from "./pipe.js";
-import { enhance } from "./helpers/index.js";
+import { enrich } from "./helpers/index.js";
 import { addDate, exec, omit } from "./helpers/generics.js";
 import { Dirent } from "node:fs";
 import { AnyObject } from "./types.js";
@@ -33,21 +33,21 @@ describe("pipe", () => {
 
   test("pipe with generics", () => {
     const addStartupTime = (time: Date = new Date()) =>
-      enhance(() => ({
+      enrich(() => ({
         startup: time,
       }));
     const timeDiff = () =>
-      enhance((data: { startup: Date; current: Date }) => {
+      enrich((data: { startup: Date; current: Date }) => {
         return {
           ...data,
           diff: new Date(data.current.getTime() - data.startup.getTime()),
         };
       });
 
-    const addHello = () => enhance(() => ({ hello: "test" }));
+    const addHello = () => enrich(() => ({ hello: "test" }));
 
     const currentToString = () =>
-      enhance((data: { current: Date }) => {
+      enrich((data: { current: Date }) => {
         return {
           current: data.current.toString(),
         };
@@ -75,7 +75,7 @@ describe("pipe", () => {
 
   test("pipe with generic and object input", () => {
     const t = () =>
-      enhance((dir: { base: string; $type: 0 }) => {
+      enrich((dir: { base: string; $type: 0 }) => {
         return {
           readAt: new Date(),
           content: [] as Dirent[],
@@ -148,20 +148,20 @@ describe("asyncPipe", () => {
   test("async pipe with generics", () => {
     const init = () => () => ({ test: "test" });
     const addStartupTime = (time: Date = new Date()) =>
-      enhance(async () => ({
+      enrich(async () => ({
         startup: time,
       }));
     const pause = (ms: number) =>
-      enhance(() => new Promise<void>((r) => setTimeout(() => r(), ms)));
+      enrich(() => new Promise<void>((r) => setTimeout(() => r(), ms)));
     const timeDiff = () =>
-      enhance(async (data: { startup: Date; current: Date }) => {
+      enrich(async (data: { startup: Date; current: Date }) => {
         return {
           diff: new Date(data.current.getTime() - data.startup.getTime()),
         };
       });
 
     const currentToString = () =>
-      enhance((data: { current: Date }) => {
+      enrich((data: { current: Date }) => {
         return {
           current: data.current.toString(),
         };
@@ -225,7 +225,7 @@ describe("asyncPipe", () => {
 
     const create = pipe(
       //listFu.convert(),
-      enhance((entity: File | Directory) => {
+      enrich((entity: File | Directory) => {
         // do something
         //return entity;
         return entity;
@@ -261,7 +261,7 @@ describe("asyncPipe", () => {
         },
       });
     const createProject = () =>
-      enhance(
+      enrich(
         async (data: {
           project: NewProject;
         }): Promise<{ project: Project }> => {
@@ -270,7 +270,7 @@ describe("asyncPipe", () => {
       );
 
     const test = () =>
-      enhance((data: { project: Project; timestamp: Date }) => {
+      enrich((data: { project: Project; timestamp: Date }) => {
         return {};
       });
 

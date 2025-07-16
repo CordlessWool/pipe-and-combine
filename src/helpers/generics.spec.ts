@@ -1,5 +1,5 @@
 import { test, describe, assertType, expect } from "vitest";
-import { enhance, addDate, omit, pick } from "./generics.js";
+import { enrich, addDate, omit, pick } from "./generics.js";
 
 describe("generics helper functions", () => {
   test("addDate", () => {
@@ -20,13 +20,13 @@ describe("generics helper functions", () => {
   });
 
   test("g", () => {
-    const merge = enhance((data: { test: string }) => ({ test2: data.test }));
+    const merge = enrich((data: { test: string }) => ({ test2: data.test }));
     const result = merge({ test: "t", text: "text" });
     expect(result).toEqual({ test: "t", test2: "t", text: "text" });
   });
 
   test("g without input", () => {
-    const merge = enhance(() => ({ test2: "t2" }));
+    const merge = enrich(() => ({ test2: "t2" }));
     const result = merge({ test: "t", text: "text" });
     expect(result).toEqual({ test: "t", test2: "t2", text: "text" });
     const result2 = merge();
@@ -35,7 +35,7 @@ describe("generics helper functions", () => {
   });
 
   test("g with default input", () => {
-    const merge = enhance((data: { test: string } = { test: "default" }) => ({
+    const merge = enrich((data: { test: string } = { test: "default" }) => ({
       test2: data.test,
     }));
     const result = merge({ test: "text" });
@@ -45,7 +45,7 @@ describe("generics helper functions", () => {
   });
 
   test("g without return", () => {
-    const merge = enhance((data: { test: string }) => {});
+    const merge = enrich((data: { test: string }) => {});
     const result = merge({ test: "t", text: "text" });
     expect(result).toEqual({ test: "t", text: "text" });
   });

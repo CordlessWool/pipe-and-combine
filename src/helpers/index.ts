@@ -1,2 +1,2 @@
-export { enhance, addDate, omit, pick, exec } from "./generics.js";
+export { enrich, addDate, omit, pick, exec } from "./generics.js";
 export * from "./pipe.js";
