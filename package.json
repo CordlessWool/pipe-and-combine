@@ -46,5 +46,7 @@
     "type": "git",
     "url": "git+https://github.com/CordlessWool/pipe-and-combine.git"
   },
-  "packageManager": "^pnpm@10.8.0"
+  "engines": {
+    "pnpm": ">=10.0.0"
+  }
 }
