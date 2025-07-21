@@ -1,5 +1,11 @@
 # pipe-and-combine
 
+## 0.9.0
+
+### Minor Changes
+
+- 0ec7b76: Rename g to enrich and remove prototype status
+
 ## 0.8.1
 
 ### Patch Changes
