@@ -19,13 +19,13 @@ describe("generics helper functions", () => {
     expect(result).toEqual({ test: "t" });
   });
 
-  test("g", () => {
+  test("enrich", () => {
     const merge = enrich((data: { test: string }) => ({ test2: data.test }));
     const result = merge({ test: "t", text: "text" });
     expect(result).toEqual({ test: "t", test2: "t", text: "text" });
   });
 
-  test("g without input", () => {
+  test("enrich without input", () => {
     const merge = enrich(() => ({ test2: "t2" }));
     const result = merge({ test: "t", text: "text" });
     expect(result).toEqual({ test: "t", test2: "t2", text: "text" });
@@ -34,7 +34,7 @@ describe("generics helper functions", () => {
     type t = null & { test2: string };
   });
 
-  test("g with default input", () => {
+  test("enrich with default input", () => {
     const merge = enrich((data: { test: string } = { test: "default" }) => ({
       test2: data.test,
     }));
@@ -44,7 +44,7 @@ describe("generics helper functions", () => {
     expect(result2).toEqual({ test2: "default" });
   });
 
-  test("g without return", () => {
+  test("enrich without return", () => {
     const merge = enrich((data: { test: string }) => {});
     const result = merge({ test: "t", text: "text" });
     expect(result).toEqual({ test: "t", text: "text" });
