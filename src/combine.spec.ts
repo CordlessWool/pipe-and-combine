@@ -1,5 +1,5 @@
 import { test, describe, expect } from "vitest";
-import { combine } from "./combine.js";
+import { combine, prepareCombine } from "./combine.js";
 
 describe("combine", () => {
   test("combine with one param", () => {
@@ -51,5 +51,12 @@ describe("combine", () => {
 
     const c = combine(asyncDouble, asyncIncrement, asyncSquare, asyncToStr);
     expect(await c(3)).toEqual([6, 4, 9, "3"]);
+  });
+
+  test("prepareCombine with predefined props", () => {
+    const combine = prepareCombine<[{ a: string }], number>();
+    combine(({ a }) => {
+      return parseInt(a);
+    });
   });
 });

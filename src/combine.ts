@@ -1,23 +1,23 @@
 import { isAsync } from "./helpers/async.js";
-import type { AnyFunction, HasAsyncFunction } from "./types.js";
+import type { AnyFunction, EmptyParams, HasAsyncFunction } from "./types.js";
 
 type CombineMap<
   AF extends AnyFunction,
-  TInput extends any[],
-  TOutput extends any
+  TInput extends Array<unknown>,
+  TOutput
 > = AF extends AnyFunction<TInput, TOutput>
   ? AF
   : (...value: TInput) => TOutput;
 
 export type CombineArray<
   T extends readonly AnyFunction[],
-  TInput extends any[],
-  TOutput extends any
+  TInput extends any[] | EmptyParams,
+  TOutput
 > = {
   [X in keyof T]: CombineMap<
     T[X],
-    TInput extends any ? Parameters<T[0]> : TInput,
-    TOutput extends any ? ReturnType<T[X]> : TOutput
+    TInput extends EmptyParams ? Parameters<T[0]> : TInput,
+    TOutput extends EmptyParams ? ReturnType<T[X]> : TOutput
   >;
 };
 
@@ -29,12 +29,16 @@ export type CombineReturn<T extends readonly AnyFunction[]> = {
  * Return a function that combines multiple functions into one. Input and Output types defines the functions could be added to the combine function.
  */
 export const prepareCombine =
-  <TInput extends any, TOutput = any>() =>
+  <TInput extends any[] | EmptyParams = EmptyParams, TOutput = EmptyParams>() =>
   <T extends readonly AnyFunction[]>(
-    ...fus: CombineArray<T, TInput[], TOutput>
+    ...fus: CombineArray<T, TInput, TOutput>
   ) => {
-    type In = TInput extends any ? Parameters<T[0]> : TInput;
-    type Out = TOutput extends any ? CombineReturn<T> : TOutput[];
+    type In = TInput extends EmptyParams ? Parameters<T[0]> : TInput;
+    type Out = TOutput extends EmptyParams
+      ? CombineReturn<T>
+      : TOutput extends void
+      ? void
+      : TOutput[];
     const func = fus.some((fu) => isAsync(fu))
       ? async (...input: TInput extends any ? Parameters<T[0]> : TInput) => {
           const result = [];
@@ -51,7 +55,7 @@ export const prepareCombine =
           fus.map((fu) => fu(...input)) as TOutput extends any
             ? CombineReturn<T>
             : TOutput[];
-    return func as HasAsyncFunction<T> extends true
+    return func as unknown as HasAsyncFunction<T> extends true
       ? (...input: In) => Promise<Out>
       : (...input: In) => Out;
   };
