@@ -10,11 +10,11 @@ export type EmptyParams = { __brand: "EmptyParams" };
 export type Decrement<N extends number> = N extends 0
   ? never // If the number is 0, there's nothing to decrement
   : BuildArray<N> extends [...infer Rest, infer _]
-  ? Rest["length"]
-  : never;
+    ? Rest["length"]
+    : never;
 type BuildArray<
   Length extends number,
-  Arr extends unknown[] = []
+  Arr extends unknown[] = [],
 > = Arr["length"] extends Length ? Arr : BuildArray<Length, [...Arr, unknown]>;
 
 export type LastIndex<T extends Array<unknown> | readonly [...unknown[]]> =
@@ -30,18 +30,18 @@ export type StringToNumber<T extends `${number}`> =
 export type Prev<T extends number | `${number}`> = T extends number
   ? Decrement<T>
   : T extends string
-  ? Decrement<StringToNumber<T>>
-  : never;
+    ? Decrement<StringToNumber<T>>
+    : never;
 
 export type Next<T extends number | `${number}`> = T extends number
   ? Increment<T>
   : T extends string
-  ? Increment<StringToNumber<T>>
-  : never;
+    ? Increment<StringToNumber<T>>
+    : never;
 
 export type AnyFunction<
   TInput extends [...any[]] = [...any[]],
-  TOutput = any
+  TOutput = any,
 > = (...inputs: TInput) => TOutput;
 
 export type MaybePromise<T> = T | Promise<T>;
@@ -52,10 +52,10 @@ export type ArrayMaybePromise<T> = {
 type ExcludeGeneric<T> = string extends T // do we actually have a string index signature?
   ? never
   : symbol extends T // is it a symbol index signature?
-  ? never
-  : number extends T // is it a number index signature?
-  ? never
-  : T;
+    ? never
+    : number extends T // is it a number index signature?
+      ? never
+      : T;
 
 export type MergeObjects<A, B> = B extends void
   ? A
@@ -69,17 +69,18 @@ export type PropablyPromise<R, B> = B extends true ? Promise<R> : R;
 
 type IncludesUndefined<T> = Extract<T, undefined> extends never ? false : true;
 
-type IsAsyncFunction<T> = T extends GMerge<AnyObject, infer GOut>
-  ? GOut extends Promise<any>
-    ? true
-    : false
-  : T extends (...args: any[]) => Promise<any>
-  ? true
-  : false;
+type IsAsyncFunction<T> =
+  T extends GMerge<AnyObject, infer GOut>
+    ? GOut extends Promise<any>
+      ? true
+      : false
+    : T extends (...args: any[]) => Promise<any>
+      ? true
+      : false;
 
 export type HasAsyncFunction<T extends readonly AnyFunction[]> = T extends [
   infer First,
-  ...infer Rest extends readonly AnyFunction[]
+  ...infer Rest extends readonly AnyFunction[],
 ]
   ? IsAsyncFunction<First> extends true
     ? true
@@ -92,7 +93,7 @@ export type ObjectFromEntries<T extends Array<readonly [string, unknown]>> = {
 
 export type ArraysToEntries<
   K extends string[],
-  V extends unknown[]
+  V extends unknown[],
 > = K["length"] extends V["length"]
   ? {
       [X in keyof K]: [K[X], X extends keyof V ? V[X] : never];
@@ -101,22 +102,24 @@ export type ArraysToEntries<
 
 export type ObjectFromArrays<
   K extends string[],
-  V extends unknown[]
+  V extends unknown[],
 > = ObjectFromEntries<ArraysToEntries<K, V>>;
 
 /**
  * Generics
  */
-type GMergeFunction<I, O> = IncludesUndefined<I> extends true
-  ? <TInput extends I = I>(
-      data?: TInput
-    ) => TInput extends undefined ? O : TInput & O
-  : <TInput extends I = I>(data: TInput) => TInput & O;
-type GMergeAsyncFunction<I, O> = IncludesUndefined<I> extends true
-  ? <TInput extends I = I>(
-      data?: TInput
-    ) => Promise<TInput extends undefined ? O : TInput & O>
-  : <TInput extends I = I>(data: TInput) => Promise<TInput & O>;
+type GMergeFunction<I, O> =
+  IncludesUndefined<I> extends true
+    ? <TInput extends I = I>(
+        data?: TInput,
+      ) => TInput extends undefined ? O : TInput & O
+    : <TInput extends I = I>(data: TInput) => TInput & O;
+type GMergeAsyncFunction<I, O> =
+  IncludesUndefined<I> extends true
+    ? <TInput extends I = I>(
+        data?: TInput,
+      ) => Promise<TInput extends undefined ? O : TInput & O>
+    : <TInput extends I = I>(data: TInput) => Promise<TInput & O>;
 export type GMerge<I, O> = (O extends Promise<infer O>
   ? GMergeAsyncFunction<I, O>
   : GMergeFunction<I, O>) & {
@@ -132,10 +135,11 @@ export type GPick<I, K extends keyof I> = ((data: I) => Pick<I, K>) & {
 
 export type GType = GMerge<any, any> | GOmit<any, any> | GPick<any, any>;
 
-export type GQueue<F, I extends any[]> = F extends GMerge<any, infer B>
-  ? MergeObjects<I[0], Awaited<B>>
-  : F extends GOmit<any, infer K>
-  ? Omit<I[0], K>
-  : F extends GPick<any, infer K>
-  ? Pick<I[0], K extends keyof I[0] ? K : never>
-  : never;
+export type GQueue<F, I extends any[]> =
+  F extends GMerge<any, infer B>
+    ? MergeObjects<I[0], Awaited<B>>
+    : F extends GOmit<any, infer K>
+      ? Omit<I[0], K>
+      : F extends GPick<any, infer K>
+        ? Pick<I[0], K extends keyof I[0] ? K : never>
+        : never;
