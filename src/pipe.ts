@@ -19,39 +19,49 @@ import type {
 export type PrevReturn<
   F extends readonly AnyFunction[],
   X extends `${number}` | number,
-  I extends any[]
+  I extends any[],
 > = X extends "0" | 0
   ? I
   : F[Prev<X>] extends GType
-  ? [Awaited<GQueue<F[Prev<X>], PrevReturn<F, Prev<X>, I>>>]
-  : [Awaited<ReturnType<F[Prev<X>]>>];
+    ? [Awaited<GQueue<F[Prev<X>], PrevReturn<F, Prev<X>, I>>>]
+    : [Awaited<ReturnType<F[Prev<X>]>>];
 
-export type PipeReduce<
-  AI extends any[],
-  BF extends AnyFunction,
-  BO = unknown
-> = BF extends AnyFunction<AI, BO> ? BF : (...value: AI) => BO;
+export type FnReturn<F extends AnyFunction, I extends any[]> = F extends GType
+  ? Awaited<GQueue<F, I>>
+  : Awaited<ReturnType<F>>;
+
+export type RawReturn<F extends AnyFunction, I extends any[]> = F extends GType
+  ? GQueue<F, I>
+  : ReturnType<F>;
+
+export type PipeReduce<AI extends any[], BF extends AnyFunction, BO = unknown> =
+  BF extends AnyFunction<AI, BO> ? BF : (...value: AI) => BO;
 
 export type PipeArray<
-  T extends readonly AnyFunction[],
-  TInput extends any[] = Parameters<T[0]>,
-  TOutput = any
-> = {
-  [X in keyof T]: X extends `${LastIndex<T>}` | LastIndex<T>
-    ? PipeReduce<PrevReturn<T, X, TInput>, T[X], TOutput>
-    : PipeReduce<PrevReturn<T, X, TInput>, T[X]>;
-};
+  TFus extends readonly AnyFunction[],
+  TInput extends unknown[],
+  Acc extends AnyFunction[] = [],
+> = TFus extends [
+  infer Fu extends AnyFunction,
+  ...infer Rest extends AnyFunction[],
+]
+  ? PipeArray<
+      Rest,
+      [FnReturn<Fu, TInput>],
+      [...Acc, (...input: TInput) => RawReturn<Fu, TInput>]
+    >
+  : [...Acc, ...TFus]; //...TFus is necessary to start the loop
 
 type PipeReturn<
   DefinedOutput,
   F extends readonly AnyFunction[],
-  I extends any[] = Parameters<F[0]>
+  I extends any[] = Parameters<F[0]>,
 > = PropablyPromise<PipeDefineOutput<DefinedOutput, F, I>, HasAsyncFunction<F>>;
 
 type PipeDefineOutput<
   DefinedOutput,
   F extends readonly AnyFunction[],
-  I extends any[] = Parameters<F[0]>
+  I extends any[] = Parameters<F[0]>,
 > = DefinedOutput extends any
   ? F[LastIndex<F>] extends GType
     ? GQueue<F[LastIndex<F>], PrevReturn<F, LastIndex<F>, I>>
@@ -72,7 +82,7 @@ export const preparePipe =
     ...fus: PipeArray<
       T,
       TInput extends EmptyParams ? Parameters<T[0]> : TInput,
-      TOutput
+      []
     >
   ) => {
     const [first, ...rest] = fus;
@@ -85,7 +95,7 @@ export const preparePipe =
               return f(data);
             }
           : (...args) => f(chain(...args)),
-      first
+      first,
     );
     type FI = TInput extends EmptyParams ? Parameters<T[0]> : TInput;
     return chain as T[0] extends GType
