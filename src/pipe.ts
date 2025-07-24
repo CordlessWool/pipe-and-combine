@@ -65,7 +65,7 @@ type PipeDefineOutput<
 > = DefinedOutput extends any
   ? F[LastIndex<F>] extends GType
     ? GQueue<F[LastIndex<F>], PrevReturn<F, LastIndex<F>, I>>
-    : Awaited<ReturnType<PipeArray<F>[LastIndex<F>]>>
+    : Awaited<ReturnType<PipeArray<F, I>[LastIndex<F>]>>
   : DefinedOutput;
 
 /**
@@ -111,5 +111,5 @@ export const preparePipe =
  */
 export const pipe = preparePipe();
 export const run = <T extends readonly AnyFunction[]>(
-  ...fus: PipeArray<T, [], unknown>
+  ...fus: PipeArray<T, []>
 ) => preparePipe<[], unknown>()<T>(...fus)();
