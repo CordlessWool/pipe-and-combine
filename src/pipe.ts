@@ -7,6 +7,7 @@ import type {
   GType,
   GQueue,
   EmptyParams,
+  IsAny,
 } from "./types.js";
 
 /**
@@ -48,7 +49,12 @@ export type PipeArray<
   ? PipeArray<
       Rest,
       [FnReturn<Fu, TInput>],
-      [...Acc, (...input: TInput) => RawReturn<Fu, TInput>]
+      [
+        ...Acc,
+        IsAny<RawReturn<Fu, TInput>> extends true
+          ? (...input: TInput) => Parameters<Rest[0]>[0]
+          : (...input: TInput) => RawReturn<Fu, TInput>,
+      ]
     >
   : [...Acc, ...TFus]; //...TFus is necessary to start the loop
 
